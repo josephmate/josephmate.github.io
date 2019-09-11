@@ -25,31 +25,76 @@ This technique involves, changing the the orientation, the zoom, and properly us
 		</h3>
 	</li>
 	<li>
-<h3>Select 'Zoom &amp; Contrast'</h3>
-<a href="http://josephmate.files.wordpress.com/2014/01/20140105_112243.jpg"><img class="alignnone size-medium wp-image-218" alt="20140105_112243" src="http://josephmate.files.wordpress.com/2014/01/20140105_112243.jpg?w=226" width="226" height="300" /></a></li>
+		<h3>Select 'Zoom &amp; Contrast'</h3>
+		<a href="/assets/20140105_zoom_constrat.jpg">
+			<img class="alignnone size-medium wp-image-218" alt="20140105_112243" src="/assets/20140105_zoom_constrat.jpg" width="226" height="300" />
+		</a>
+	</li>
 	<li>
-<h3>Select 200%</h3>
-<a href="http://josephmate.files.wordpress.com/2014/01/20140105_112629.jpg"><img class="alignnone size-medium wp-image-219" alt="20140105_112629" src="http://josephmate.files.wordpress.com/2014/01/20140105_112629.jpg?w=300" width="300" height="112" /></a></li>
+		<h3>Select 200%</h3>
+		<a href="/assets/20140105_fit_to_screen.jpg">
+			<img class="alignnone size-medium wp-image-219" alt="20140105_112629" src="/assets/20140105_fit_to_screen.jpg" width="300" height="112" />
+		</a>
+	</li>
 	<li>
-<h3>Using the arrow keys <a href="http://josephmate.files.wordpress.com/2014/01/arrow.jpg"><img class="alignnone  wp-image-229" alt="arrow" src="http://josephmate.files.wordpress.com/2014/01/arrow.jpg?w=300" width="48" height="46" /></a>, position rectangle in top left corner</h3>
-<a href="http://josephmate.files.wordpress.com/2014/01/20140105_112653.jpg"><img class="alignnone size-medium wp-image-220" alt="20140105_112653" src="http://josephmate.files.wordpress.com/2014/01/20140105_112653.jpg?w=229" width="229" height="300" /></a>
-<a href="http://josephmate.files.wordpress.com/2014/01/20140105_112710.jpg"><img class="alignnone size-medium wp-image-221" alt="20140105_112710" src="http://josephmate.files.wordpress.com/2014/01/20140105_112710.jpg?w=232" width="232" height="300" /></a></li>
+		<h3>
+			Using the arrow keys
+			<a href="/assets/20140105_arrow.jpg">
+				<img class="alignnone  wp-image-229" alt="arrow" src="/assets/20140105_arrow.jpg" width="48" height="46" />
+			</a>
+			, position rectangle in top left corner
+		</h3>
+		<a href="/assets/20140105_before_zoom.jpg">
+			<img class="alignnone size-medium wp-image-220" alt="20140105_112653" src="/assets/20140105_before_zoom.jpg" width="229" height="300" />
+		</a>
+		<a href="/assets/20140105_after_zoom.jpg">
+			<img class="alignnone size-medium wp-image-221" alt="20140105_112710" src="/assets/20140105_after_zoom.jpg" width="232" height="300" />
+		</a>
+	</li>
 	<li>
-<h3>To go to the second column, <b>do not</b> use the right arrow key <a href="http://josephmate.files.wordpress.com/2014/01/arrow.jpg"><img alt="arrow" src="http://josephmate.files.wordpress.com/2014/01/arrow.jpg?w=300" width="48" height="46" /></a></h3>
-Intuitively, you would go to the right side in order to view the second column by pressing the right arrow two times. However, on the second press, the Kindle is not smart enough to realize it viewing beyond the bounds of the document. As a result, it repositions as if the document kept going to the right.
-<table>
-<tbody>
-<tr>
-<td><a href="http://josephmate.files.wordpress.com/2014/01/20140105_112722.jpg"><img class="alignnone size-medium wp-image-222" alt="20140105_112722" src="http://josephmate.files.wordpress.com/2014/01/20140105_112722.jpg?w=226" width="226" height="300" /></a></td>
-<td><a href="http://josephmate.files.wordpress.com/2014/01/20140105_112731.jpg"><img class="alignnone size-medium wp-image-223" alt="20140105_112731" src="http://josephmate.files.wordpress.com/2014/01/20140105_112731.jpg?w=235" width="235" height="300" /></a></td>
-</tr>
-</tbody>
-</table>
-</li>
+		<h3>To go to the second column, <b>do not</b> use the right arrow key 
+			<a href="/assets/20140105_arrow.jpg">
+				<img alt="arrow" src="/assets/20140105_arrow.jpg" width="48" height="46" />
+			</a>
+		</h3>
+		Intuitively, you would go to the right side in order to view the second column
+		by pressing the right arrow two times. However, on the second press, the Kindle
+		is not smart enough to realize it viewing beyond the bounds of the document. As
+		a result, it repositions as if the document kept going to the right.
+		<table>
+			<tbody>
+				<tr>
+					<td>First right arrow press</td>
+					<td>Second right arrow press</td>
+				</tr>
+				<tr>
+					<td>
+						<a href="/assets/20140105_first_right_press.jpg">
+							<img class="alignnone size-medium wp-image-222" alt="first right press" src="/assets/20140105_first_right_press.jpg" width="226" height="300" />
+						</a>
+					</td>
+					<td>
+						<a href="/assets/20140105_second_right_press.jpg">
+							<img class="alignnone size-medium wp-image-223" alt="second right press" src="/assets/20140105_second_right_press.jpg" width="235" height="300" />
+						</a>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</li>
 	<li>
-<h3>To go to the second column, use the left arrow key <a href="http://josephmate.files.wordpress.com/2014/01/arrow.jpg"><img alt="arrow" src="http://josephmate.files.wordpress.com/2014/01/arrow.jpg?w=300" width="48" height="46" /></a></h3>
-Here we are playing a trick on the Kindle to do the right thing. It wraps around and properly displays the second column. To go back to the first column we need to use the right arrow key.
-<a href="http://josephmate.files.wordpress.com/2014/01/20140105_112742.jpg"><img class="alignnone size-medium wp-image-224" alt="20140105_112742" src="http://josephmate.files.wordpress.com/2014/01/20140105_112742.jpg?w=236" width="236" height="300" /></a></li>
+		<h3>To go to the second column, use the left arrow key 
+			<a href="/assets/20140105_arrow.jpg">
+				<img alt="arrow" src="/assets/20140105_arrow.jpg" width="48" height="46" />
+			</a>
+		</h3>
+		Here we are playing a trick on the Kindle to do the right thing. It wraps
+		around and properly displays the second column. To go back to the first column
+		we need to use the right arrow key.
+		<a href="/assets/20140105_pressing_left.jpg">
+			<img class="alignnone size-medium wp-image-224" alt="20140105_112742" src="/assets/20140105_pressing_left.jpg" width="236" height="300" />
+		</a>
+	</li>
 </ol>
 <h2>Conclusions</h2>
 Reading two column technical documents on the Kindle is possible. It's just not very intuitive to figure out on your own. Please let me know what Kindles and e-readers this trick works for.
