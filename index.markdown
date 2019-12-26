@@ -4,7 +4,7 @@
 
 layout: home
 ---
-- [Blog](https://josephmate.wordpress.com)
+- [Blog](https://josephmate.github.io/)
 - [Github](https://github.com/josephmate)
 - [LinkedIn](https://ca.linkedin.com/in/josephmatei)
 - [Java HPROF Converter](https://github.com/josephmate/java_hprof_converter)
