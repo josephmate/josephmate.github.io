@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Deadlock: Who Owns the Lock?
+title: "Deadlock: Who Owns the Lock?"
 date: 2020-02-24 18:40
 author: joseph.mate
 comments: true
@@ -81,7 +81,7 @@ Starting!
 Grabbing the read lock.
 Grabbing the write lock.
 ```
-The program makes no progress to the next println after that. It was deadlocked. That must have been my bug (it wasn't)!
+The program makes no progress to the next println after that. It was deadlocked and the thread dump didn't show who owned the thing the main thread was waiting for. That must have been my bug (it wasn't)!
 
 # The Grim Realization
 I wanted to share what I learned by putting together this article. The first thing I needed was a sample deadlock that showed reeantrant locks dead locking and the standard out it produced:
