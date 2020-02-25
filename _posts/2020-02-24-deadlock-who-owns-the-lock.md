@@ -175,7 +175,8 @@ THE DUMP DOES NOT SHOW WHO OWNS WHAT IT'S WAITING FOR!!!
 I thought it was because of a read then write lock, similar to the Oracle article, that caused the thread dump to not show who owns the lock.
 That was not why.
 The real reason was lock ownership is not shown by thread dumps.
-Thread dumps only show monitor (synchronized keyword) ownership.
+"The default deadlock detection works with locks that are obtained using the synchronized keyword, as well as with locks that are obtained using the java.util.concurrent package. If the Java VM flag `-XX:+PrintConcurrentLocks` is set, then the stack trace also shows a list of lock owners." [Troubleshooting Hanging or Looping Processes](https://docs.oracle.com/javase/7/docs/webnotes/tsg/TSG-VM/html/hangloop.html).
+I'll have to try with `-XX:+PrintConcurrentLocks`.
 
 # Sample Code
 If you want to try it out, check the sample code I saved to [my JavaDeadlock github repository](https://github.com/josephmate/JavaDeadlocks).
