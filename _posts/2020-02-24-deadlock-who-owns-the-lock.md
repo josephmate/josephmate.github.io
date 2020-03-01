@@ -11,6 +11,9 @@ categories: [Java, Deadlock]
 1. Locking a readlock, then locking the write lock on the same lock creates a deadlock. 
 2. Deadlocks created using locks instead of monitors does not appear in thread dumps (like those created by kill -3 (linux) or Ctrl+Break (windows)).
 3. Keep digging and you'll uncover a nasty incorrect assumption you've been making.
+4. `-XX:+PrintConcurrentLocks` detects some deadlocks
+5. `-XX:+PrintConcurrentLocks` does not print reentrant locks on stack traces
+6. `-XX:+PrintConcurrentLocks` does not detect acquiring read then write lock in the same thread deadlock
 
 If this interests you read on!
 
@@ -177,6 +180,98 @@ That was not why.
 The real reason was lock ownership is not shown by thread dumps.
 "The default deadlock detection works with locks that are obtained using the synchronized keyword, as well as with locks that are obtained using the java.util.concurrent package. If the Java VM flag `-XX:+PrintConcurrentLocks` is set, then the stack trace also shows a list of lock owners." [Troubleshooting Hanging or Looping Processes](https://docs.oracle.com/javase/7/docs/webnotes/tsg/TSG-VM/html/hangloop.html).
 I'll have to try with `-XX:+PrintConcurrentLocks`.
+
+# -XX:+PrintConcurrentLocks
+
+I tried running my deadlock programs again, but this time with `-XX:+PrintConcurrentLocks`.
+
+Now with the Reentrant locks kill -3, or crtl+break, and it still does not show lock owner in the stack trace:
+```bash
+"Thread-1" #11 prio=5 os_prio=0 tid=0x0000000019fb7000 nid=0x29cc waiting on condition [0x000000001a6cf000]
+   java.lang.Thread.State: WAITING (parking)
+        at sun.misc.Unsafe.park(Native Method)
+        - parking to wait for  <0x00000000d576ade0> (a java.util.concurrent.locks.ReentrantLock$NonfairSync)
+        at java.util.concurrent.locks.LockSupport.park(LockSupport.java:175)
+        at java.util.concurrent.locks.AbstractQueuedSynchronizer.parkAndCheckInterrupt(AbstractQueuedSynchronizer.java:836)
+        at java.util.concurrent.locks.AbstractQueuedSynchronizer.acquireQueued(AbstractQueuedSynchronizer.java:870)
+        at java.util.concurrent.locks.AbstractQueuedSynchronizer.acquire(AbstractQueuedSynchronizer.java:1199)
+        at java.util.concurrent.locks.ReentrantLock$NonfairSync.lock(ReentrantLock.java:209)
+        at java.util.concurrent.locks.ReentrantLock.lock(ReentrantLock.java:285)
+        at SimpleReentrantDeadlockMain$DeadlockRunnable.run(SimpleReentrantDeadlockMain.java:27)
+        at java.lang.Thread.run(Thread.java:748)
+
+"Thread-0" #10 prio=5 os_prio=0 tid=0x0000000019fb4000 nid=0x8344 waiting on condition [0x000000001a5cf000]
+   java.lang.Thread.State: WAITING (parking)
+        at sun.misc.Unsafe.park(Native Method)
+        - parking to wait for  <0x00000000d576ae10> (a java.util.concurrent.locks.ReentrantLock$NonfairSync)
+        at java.util.concurrent.locks.LockSupport.park(LockSupport.java:175)
+        at java.util.concurrent.locks.AbstractQueuedSynchronizer.parkAndCheckInterrupt(AbstractQueuedSynchronizer.java:836)
+        at java.util.concurrent.locks.AbstractQueuedSynchronizer.acquireQueued(AbstractQueuedSynchronizer.java:870)
+        at java.util.concurrent.locks.AbstractQueuedSynchronizer.acquire(AbstractQueuedSynchronizer.java:1199)
+        at java.util.concurrent.locks.ReentrantLock$NonfairSync.lock(ReentrantLock.java:209)
+        at java.util.concurrent.locks.ReentrantLock.lock(ReentrantLock.java:285)
+        at SimpleReentrantDeadlockMain$DeadlockRunnable.run(SimpleReentrantDeadlockMain.java:27)
+        at java.lang.Thread.run(Thread.java:748)
+```
+
+However, now it detects the deadlock:
+```bash
+Found one Java-level deadlock:
+=============================
+"Thread-1":
+  waiting for ownable synchronizer 0x00000000d576ade0, (a java.util.concurrent.locks.ReentrantLock$NonfairSync),
+  which is held by "Thread-0"
+"Thread-0":
+  waiting for ownable synchronizer 0x00000000d576ae10, (a java.util.concurrent.locks.ReentrantLock$NonfairSync),
+  which is held by "Thread-1"
+
+Java stack information for the threads listed above:
+===================================================
+"Thread-1":
+        at sun.misc.Unsafe.park(Native Method)
+        - parking to wait for  <0x00000000d576ade0> (a java.util.concurrent.locks.ReentrantLock$NonfairSync)
+        at java.util.concurrent.locks.LockSupport.park(LockSupport.java:175)
+        at java.util.concurrent.locks.AbstractQueuedSynchronizer.parkAndCheckInterrupt(AbstractQueuedSynchronizer.java:836)
+        at java.util.concurrent.locks.AbstractQueuedSynchronizer.acquireQueued(AbstractQueuedSynchronizer.java:870)
+        at java.util.concurrent.locks.AbstractQueuedSynchronizer.acquire(AbstractQueuedSynchronizer.java:1199)
+        at java.util.concurrent.locks.ReentrantLock$NonfairSync.lock(ReentrantLock.java:209)
+        at java.util.concurrent.locks.ReentrantLock.lock(ReentrantLock.java:285)
+        at SimpleReentrantDeadlockMain$DeadlockRunnable.run(SimpleReentrantDeadlockMain.java:27)
+        at java.lang.Thread.run(Thread.java:748)
+"Thread-0":
+        at sun.misc.Unsafe.park(Native Method)
+        - parking to wait for  <0x00000000d576ae10> (a java.util.concurrent.locks.ReentrantLock$NonfairSync)
+        at java.util.concurrent.locks.LockSupport.park(LockSupport.java:175)
+        at java.util.concurrent.locks.AbstractQueuedSynchronizer.parkAndCheckInterrupt(AbstractQueuedSynchronizer.java:836)
+        at java.util.concurrent.locks.AbstractQueuedSynchronizer.acquireQueued(AbstractQueuedSynchronizer.java:870)
+        at java.util.concurrent.locks.AbstractQueuedSynchronizer.acquire(AbstractQueuedSynchronizer.java:1199)
+        at java.util.concurrent.locks.ReentrantLock$NonfairSync.lock(ReentrantLock.java:209)
+        at java.util.concurrent.locks.ReentrantLock.lock(ReentrantLock.java:285)
+        at SimpleReentrantDeadlockMain$DeadlockRunnable.run(SimpleReentrantDeadlockMain.java:27)
+        at java.lang.Thread.run(Thread.java:748)
+
+Found 1 deadlock.
+```
+
+Same thing happens with acquiring the read then write lock in the same thread, the lock ownership is not shown in the stacktrace.
+```bash
+"main" #1 prio=5 os_prio=0 tid=0x0000000002461000 nid=0x4f10 waiting on condition [0x00000000023ff000]
+   java.lang.Thread.State: WAITING (parking)
+        at sun.misc.Unsafe.park(Native Method)
+        - parking to wait for  <0x00000000d576bc70> (a java.util.concurrent.locks.ReentrantReadWriteLock$NonfairSync)
+        at java.util.concurrent.locks.LockSupport.park(LockSupport.java:175)
+        at java.util.concurrent.locks.AbstractQueuedSynchronizer.parkAndCheckInterrupt(AbstractQueuedSynchronizer.java:836)
+        at java.util.concurrent.locks.AbstractQueuedSynchronizer.acquireQueued(AbstractQueuedSynchronizer.java:870)
+        at java.util.concurrent.locks.AbstractQueuedSynchronizer.acquire(AbstractQueuedSynchronizer.java:1199)
+        at java.util.concurrent.locks.ReentrantReadWriteLock$WriteLock.lock(ReentrantReadWriteLock.java:943)
+        at ReadLockThenWriteLockMain.main(ReadLockThenWriteLockMain.java:11)
+
+   Locked ownable synchronizers:
+        - None
+```
+
+Even worse, the deadlock wasn't detected!
+
 
 # Sample Code
 If you want to try it out, check the sample code I saved to [my JavaDeadlock github repository](https://github.com/josephmate/JavaDeadlocks).
