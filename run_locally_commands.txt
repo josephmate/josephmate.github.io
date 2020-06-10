@@ -1,0 +1,10 @@
+
+Installation:
+https://jekyllrb.com/docs/
+
+gem install jekyll bundler
+
+Run locally:
+bundle exec jekyll serve
+
+Browse to http://localhost:4000
