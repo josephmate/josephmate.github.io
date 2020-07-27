@@ -31,15 +31,28 @@ I put together some experiments to confirm.
 I measured how long it would take to do different powers of 10 of concatenations in Java and javascript.
 
 
-|           | Java        | Java               | Javascript      | Javascript      |
-| # concats | String (ms) | StringBuilder (ms) | concat (ms)     | Array.join (ms) |
-|-----------|-------------|--------------------|-----------------|-----------------|
-|        10 |           0 |                  0 |                 |                 |
-|       100 |           0 |                  0 |                 |                 |
-|      1000 |           3 |                  0 |                 |                 |
-|     10000 |         187 |                  1 |                 |                 |
-|    100000 |       10171 |                  4 |                 |                 |
-|    100000 |      394395 |                 15 |                 |                 |
+|           |             |                    | Chrome          | Chrome          | Firefox         | Firefox         |
+|           | Java        | Java               | Javascript      | Javascript      | Javascript      | Javascript      |
+| # concats | String (ms) | StringBuilder (ms) | concat (ms)     | Array.join (ms) | concat (ms)     | Array.join (ms) |
+|-----------|-------------|--------------------|-----------------|-----------------|-----------------|-----------------|
+|      2^10 |           4 |                  0 |               0 |               0 |               0 |               0 |
+|      2^11 |          12 |                  0 |               0 |               0 |               0 |               0 |
+|      2^12 |          28 |                  0 |               1 |               0 |               0 |               0 |
+|      2^13 |          99 |                  0 |               1 |               1 |               1 |               0 |
+|      2^14 |         374 |                  1 |               3 |               2 |               1 |               0 |
+|      2^15 |        1197 |                  2 |               2 |               2 |               2 |               1 |
+|      2^16 |        2961 |                  1 |               8 |               4 |               3 |               3 |
+|      2^17 |        4505 |                  3 |              15 |               8 |               6 |               4 |
+|      2^18 |       21945 |                  5 |              30 |              18 |              14 |              11 |
+|      2^19 |       94077 |                  6 |              79 |              37 |              12 |              18 |
+|      2^20 |      412675 |                 11 |             144 |              71 |              42 |              44 |
+|      2^21 |           0 |                  0 |             408 |             156 |              68 |              70 |
+|      2^22 |           0 |                  0 |             906 |             318 |             172 |             149 |
+|      2^23 |           0 |                  0 |            1650 |             621 |             272 |             384 |
+|      2^24 |           0 |                  0 |            3418 |            1416 |             518 |             766 |
+|      2^25 |           0 |                  0 |            7411 |            3275 |            1836 |            1846 |
+|      2^26 |           0 |                  0 |           14548 |            5385 |            5075 |            3655 |
+|      2^27 |           0 |                  0 |                 |                 |            9850 |           10912 |
 
 <details>
 <summary>Click to see the java source code of the experiment</summary>
@@ -58,9 +71,6 @@ blah
 ```
 </details>
 If you would like to checkout a copy of the source code take a look at [my repo.](https://github.com/josephmate/JavaVsJavascriptStringBuilder).
-
-
-https://jsfiddle.net/dfzprykm/
 
 # Why Javascript Does not Need a StringBuilder
 
