@@ -23,7 +23,7 @@ Many books, articles, blog posts and stack overflow questions have extensively c
 
 Now you can see why it came as such a shock to me.
 I assumed javascript would do the same thing as java to maintain the immutability of strings.
-Java allocates a new array containing the result of each concatenation resulting in the O(N^2) runtime complexity.
+Java allocates a new array containing the result of each successive concatenation resulting in the O(N^2) runtime complexity.
 
 # Experiments
 When I first learned this from a co-worker, I couldn't believe it!
@@ -46,36 +46,141 @@ I measured how long it would take to do different powers of 10 of concatenations
 |      2^18 |       21945 |                  5 |              30 |              18 |              14 |              11 |
 |      2^19 |       94077 |                  6 |              79 |              37 |              12 |              18 |
 |      2^20 |      412675 |                 11 |             144 |              71 |              42 |              44 |
-|      2^21 |           0 |                  0 |             408 |             156 |              68 |              70 |
-|      2^22 |           0 |                  0 |             906 |             318 |             172 |             149 |
-|      2^23 |           0 |                  0 |            1650 |             621 |             272 |             384 |
-|      2^24 |           0 |                  0 |            3418 |            1416 |             518 |             766 |
-|      2^25 |           0 |                  0 |            7411 |            3275 |            1836 |            1846 |
-|      2^26 |           0 |                  0 |           14548 |            5385 |            5075 |            3655 |
-|      2^27 |           0 |                  0 |                 |                 |            9850 |           10912 |
+|      2^21 |     1886317 |                 39 |             408 |             156 |              68 |              70 |
+|      2^22 |     8529431 |                 70 |             906 |             318 |             172 |             149 |
+|      2^23 |    TOO LONG |                119 |            1650 |             621 |             272 |             384 |
+|      2^24 |    TOO LONG |                209 |            3418 |            1416 |             518 |             766 |
+|      2^25 |    TOO LONG |                492 |            7411 |            3275 |            1836 |            1846 |
+|      2^26 |    TOO LONG |                898 |           14548 |            5385 |            5075 |            3655 |
+|      2^27 |    TOO LONG |               1738 |             OOM |             OOM |            9850 |           10912 |
+
+If you would like to checkout a copy of the source code take a look at [my repo](https://github.com/josephmate/JavaVsJavascriptStringBuilder).
 
 <details>
 <summary>Click to see the java source code of the experiment</summary>
 
-```java
-blah
+```
+public static void main(String [] args) {
+    final int base;
+    final int startPower;
+    final int concatPowerLimit;
+    final int powerLimit;
+
+    if(args.length >= 4) {
+        base = Integer.parseInt(args[0]);
+        startPower = Integer.parseInt(args[1]);
+        concatPowerLimit = Integer.parseInt(args[2]);
+        powerLimit = Integer.parseInt(args[3]);
+    } else {
+        base = 2;
+        startPower = 1;
+        concatPowerLimit = 21; // at least 2 hours to compute the 22nd one
+        powerLimit = 27;
+    }
+
+    for(int power = startPower; power <= 27; power++) {
+        int size = (int)Math.pow(2, power);
+        runStringBuilderExperiment(base, power, size);
+        if (power <= concatPowerLimit) {
+            runConcatExperiment(base, power, size);
+        }
+    }
+}
+
+public static void runConcatExperiment(int base, int power, int size) {
+    String result = "";
+    long start = System.currentTimeMillis();
+    for (int i = 0; i < size; i++) {
+        result += (i%10);
+    }
+    long end = System.currentTimeMillis();
+    long duration = end - start;
+    System.out.println(String.format("concat %d^%d %d %d %d", base, power, size, result.length(), duration));
+}
+
+public static void runStringBuilderExperiment(int base, int power, int size) {
+    StringBuilder builder = new StringBuilder();
+    long start = System.currentTimeMillis();
+    for (int i = 0; i < size; i++) {
+        builder.append(i%10);
+    }
+    String result = builder.toString();
+    long end = System.currentTimeMillis();
+    long duration = end - start;
+    System.out.println(String.format("builder %d^%d %d %d %d", base, power, size, result.length(), duration));
+}
 ```
 </details>
 
 You can try out the javascript experiment in your browser at my [git hub page](https://josephmate.github.io/JavaVsJavascriptStringBuilder/).
+
 <details>
 <summary>Click to see the javascript source code of the experiment</summary>
 
-```javascript
-blah
+```
+function runConcatExperiment(size) {
+    var result = "";
+    var start = new Date().getTime();
+    for (var i = 0; i < size; i++) {
+        result += (i%10);
+    }
+    var end = new Date().getTime();
+    var duration = end - start;
+    console.log("concat %d %d %d", size, result.length, duration);
+    return duration;
+}
+
+function runArrayJoinExperiment(size) {
+    var builder = [];
+    var start = new Date().getTime();
+    for (var i = 0; i < size; i++) {
+        builder.push(i%10);
+    }
+    var result = builder.join();
+    var end = new Date().getTime();
+    var duration = end - start;
+    console.log("concat %d %d %d", size, result.length, duration);
+    return duration;
+}
+
+function addRow(base, power, size, concatDuration, arrayJoinDuration) {
+    var resultsTable = document.getElementById("results");
+    var tableRow = document.createElement("tr");
+    var powerCell = document.createElement("td");
+    powerCell.innerText = base + "^" + power;
+    tableRow.append(powerCell);
+    var sizeCell = document.createElement("td");
+    sizeCell.innerText = size;
+    tableRow.append(sizeCell);
+    var concatCell  = document.createElement("td");
+    concatCell.innerText = concatDuration;
+    tableRow.append(concatCell);
+    var joinCell  = document.createElement("td");
+    joinCell.innerText = arrayJoinDuration;
+    tableRow.append(joinCell);
+    resultsTable.appendChild(tableRow);
+}
+
+function runExperiment() {
+    var baseInput = document.getElementById("base");
+    var base = baseInput.value;
+    var powerLimitInput = document.getElementById("powerLimit");
+    var powerLimit = powerLimitInput.value;
+    for(var power = 1; power <= powerLimit; power++) {
+        var size = Math.pow(2, power);
+        var concatDuration = runConcatExperiment(size);
+        var arrayJoinDuration = runArrayJoinExperiment(size);
+        addRow(base, power, size, concatDuration, arrayJoinDuration);
+    }
+}
 ```
 </details>
-If you would like to checkout a copy of the source code take a look at [my repo.](https://github.com/josephmate/JavaVsJavascriptStringBuilder).
+
 
 # Why Javascript Does not Need a StringBuilder
 
 Following the experiments, I wanted to know why.
-My research let me to [this email chain](https://www.mail-archive.com/es-discuss@mozilla.org/msg10071.html) where Dr. Axel Rauschmayer
+My research led me to [this email chain](https://www.mail-archive.com/es-discuss@mozilla.org/msg10071.html) where Dr. Axel Rauschmayer
 proposes adding StringBuilder to the next version of ECMAScript,
 > Is this worthy of ES.next support? Or does it belong into a library?
 > 
@@ -105,5 +210,7 @@ https://hg.mozilla.org/mozilla-central/file/tip/js/src/vm/StringType.h#l73
 >    headers with no associated char array and whose leaf nodes are linear
 >    strings.
 
-# Question to the Reader
+# Discussion
 Could Java implement a similar optimization to the JVM?
+
+Are ropes good enough? At 2^24 to 2^27 we're measuring the concatinations in seconds! You could argue that's good enough because that's the memory limit of the browser. What about javascript that does not run the in browser but in the backend? Can we do better?
