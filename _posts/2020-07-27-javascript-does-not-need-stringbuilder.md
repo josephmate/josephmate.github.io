@@ -30,6 +30,21 @@ When I first learned this from a co-worker, I couldn't believe it!
 I put together some experiments to confirm.
 I measured how long it would take to do different powers of 10 of concatenations in Java and javascript.
 
+If you would like to checkout a copy of the source code take a look at the last two sections (Java source and Javascript source) of this page or check [my repo](https://github.com/josephmate/JavaVsJavascriptStringBuilder).
+
+You can try out the javascript experiment in your browser at my [git hub page](https://josephmate.github.io/JavaVsJavascriptStringBuilder/).
+
+
+I've summarize the results in the table below. 
+* \# concats: shows the number of concats I used to generate the timings for that row
+* Java String (ms): how long it took to do that many concats using the naive += in milleseconds
+* \# concats: shows the number of concats I used to generate the timings for that row
+* Java StringBuilder (ms): how long it took to do that many concats using StringBuilder
+* Chrome Javascript concat (ms): how long it took to do that many concats using the naive +=
+* Chrome Javascript concat (ms): how long it took to do that many concats using Array.join
+* Firefox Javascript concat (ms): how long it took to do that many concats using the naive +=
+* Firefox Javascript concat (ms): how long it took to do that many concats using Array.join
+
 |           |             |                    | Chrome          | Chrome          | Firefox         | Firefox         |
 |           | Java        | Java               | Javascript      | Javascript      | Javascript      | Javascript      |
 | # concats | String (ms) | StringBuilder (ms) | concat (ms)     | Array.join (ms) | concat (ms)     | Array.join (ms) |
@@ -53,13 +68,11 @@ I measured how long it would take to do different powers of 10 of concatenations
 |      2^26 |    TOO LONG |                898 |           14548 |            5385 |            5075 |            3655 |
 |      2^27 |    TOO LONG |               1738 |             OOM |             OOM |            9850 |           10912 |
 
-If you would like to checkout a copy of the source code take a look at the last two sections (Java source and Javascript source) of this page or check [my repo](https://github.com/josephmate/JavaVsJavascriptStringBuilder).
-
-
-
-You can try out the javascript experiment in your browser at my [git hub page](https://josephmate.github.io/JavaVsJavascriptStringBuilder/).
-
-
+At 2^23, the naive Java String concatenation took long to run.
+I gave up at 2^22 when it took over 2 hours!
+Each doubling of the input size results in more than double the 
+However, with javascript it's hard to tell.
+The growth looks kind of linear but maybe log linear.
 
 # Why Javascript Does not Need a StringBuilder
 
@@ -95,7 +108,7 @@ https://hg.mozilla.org/mozilla-central/file/tip/js/src/vm/StringType.h#l73
 >    strings.
 
 # Discussion
-Could Java implement a similar optimization to the JVM?
+Could Java implement a similar optimization to the JVM so that people who overlook this mistake aren't hit with an O(N^2) but a O(NlgN) algorithm instead?
 
 Are ropes good enough? At 2^24 to 2^27 we're measuring the concatinations in seconds! You could argue that's good enough because that's the memory limit of the browser. What about javascript that does not run the in browser but in the backend? Can we do better?
 
