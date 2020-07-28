@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Javascript Does Not Need a StringBuilder"
-date: 2020-02-24 18:40
+date: 2020-07-27 20:14
 author: joseph.mate
 comments: true
 categories: [Java, Javascript, StringBuilder]
@@ -29,7 +29,6 @@ Java allocates a new array containing the result of each successive concatenatio
 When I first learned this from a co-worker, I couldn't believe it!
 I put together some experiments to confirm.
 I measured how long it would take to do different powers of 10 of concatenations in Java and javascript.
-
 
 |           |             |                    | Chrome          | Chrome          | Firefox         | Firefox         |
 |           | Java        | Java               | Javascript      | Javascript      | Javascript      | Javascript      |
@@ -59,7 +58,8 @@ If you would like to checkout a copy of the source code take a look at [my repo]
 <details>
 <summary>Click to see the java source code of the experiment</summary>
 
-```
+
+```java
 public static void main(String [] args) {
     final int base;
     final int startPower;
@@ -112,12 +112,12 @@ public static void runStringBuilderExperiment(int base, int power, int size) {
 ```
 </details>
 
-You can try out the javascript experiment in your browser at my [git hub page](https://josephmate.github.io/JavaVsJavascriptStringBuilder/).
+<p>You can try out the javascript experiment in your browser at my [git hub page](https://josephmate.github.io/JavaVsJavascriptStringBuilder/).</p>
 
 <details>
 <summary>Click to see the javascript source code of the experiment</summary>
 
-```
+```javascript
 function runConcatExperiment(size) {
     var result = "";
     var start = new Date().getTime();
