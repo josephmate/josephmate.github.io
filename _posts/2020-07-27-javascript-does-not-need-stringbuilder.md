@@ -44,29 +44,32 @@ I've summarize the results in the table below.
 * Chrome Javascript concat (ms): how long it took to do that many concats using Array.join
 * Firefox Javascript concat (ms): how long it took to do that many concats using the naive +=
 * Firefox Javascript concat (ms): how long it took to do that many concats using Array.join
+* NodeJS Javascript concat (ms): how long it took to do that many concats using the naive +=
+* NodeJS Javascript concat (ms): how long it took to do that many concats using Array.join
 
-|           |             |                    | Chrome          | Chrome          | Firefox         | Firefox         |
-|           | Java        | Java               | Javascript      | Javascript      | Javascript      | Javascript      |
-| # concats | String (ms) | StringBuilder (ms) | concat (ms)     | Array.join (ms) | concat (ms)     | Array.join (ms) |
-|-----------|-------------|--------------------|-----------------|-----------------|-----------------|-----------------|
-|      2^10 |           4 |                  0 |               0 |               0 |               0 |               0 |
-|      2^11 |          12 |                  0 |               0 |               0 |               0 |               0 |
-|      2^12 |          28 |                  0 |               1 |               0 |               0 |               0 |
-|      2^13 |          99 |                  0 |               1 |               1 |               1 |               0 |
-|      2^14 |         374 |                  1 |               3 |               2 |               1 |               0 |
-|      2^15 |        1197 |                  2 |               2 |               2 |               2 |               1 |
-|      2^16 |        2961 |                  1 |               8 |               4 |               3 |               3 |
-|      2^17 |        4505 |                  3 |              15 |               8 |               6 |               4 |
-|      2^18 |       21945 |                  5 |              30 |              18 |              14 |              11 |
-|      2^19 |       94077 |                  6 |              79 |              37 |              12 |              18 |
-|      2^20 |      412675 |                 11 |             144 |              71 |              42 |              44 |
-|      2^21 |     1886317 |                 39 |             408 |             156 |              68 |              70 |
-|      2^22 |     8529431 |                 70 |             906 |             318 |             172 |             149 |
-|      2^23 |    TOO LONG |                119 |            1650 |             621 |             272 |             384 |
-|      2^24 |    TOO LONG |                209 |            3418 |            1416 |             518 |             766 |
-|      2^25 |    TOO LONG |                492 |            7411 |            3275 |            1836 |            1846 |
-|      2^26 |    TOO LONG |                898 |           14548 |            5385 |            5075 |            3655 |
-|      2^27 |    TOO LONG |               1738 |             OOM |             OOM |            9850 |           10912 |
+|           |             |                    | Chrome          | Chrome          | Firefox         | Firefox         | NodeJS          | NodeJS          |
+|           | Java        | Java               | Javascript      | Javascript      | Javascript      | Javascript      | Javascript      | Javascript      |
+| # concats | String (ms) | StringBuilder (ms) | concat (ms)     | Array.join (ms) | concat (ms)     | Array.join (ms) | concat (ms)     | Array.join (ms) |
+|-----------|-------------|--------------------|-----------------|-----------------|-----------------|-----------------|-----------------|-----------------|
+|      2^10 |           4 |                  0 |               0 |               0 |               0 |               0 |               1 |               0 |
+|      2^11 |          12 |                  0 |               0 |               0 |               0 |               0 |               1 |               0 |
+|      2^12 |          28 |                  0 |               1 |               0 |               0 |               0 |               1 |               1 |
+|      2^13 |          99 |                  0 |               1 |               1 |               1 |               0 |               1 |               0 |
+|      2^14 |         374 |                  1 |               3 |               2 |               1 |               0 |               1 |               2 |
+|      2^15 |        1197 |                  2 |               2 |               2 |               2 |               1 |               4 |               4 |
+|      2^16 |        2961 |                  1 |               8 |               4 |               3 |               3 |              10 |               6 |
+|      2^17 |        4505 |                  3 |              15 |               8 |               6 |               4 |              29 |              12 |
+|      2^18 |       21945 |                  5 |              30 |              18 |              14 |              11 |              29 |              22 |
+|      2^19 |       94077 |                  6 |              79 |              37 |              12 |              18 |             112 |              54 |
+|      2^20 |      412675 |                 11 |             144 |              71 |              42 |              44 |             206 |              93 |
+|      2^21 |     1886317 |                 39 |             408 |             156 |              68 |              70 |             460 |             245 |
+|      2^22 |     8529431 |                 70 |             906 |             318 |             172 |             149 |             813 |             425 |
+|      2^23 |    TOO LONG |                119 |            1650 |             621 |             272 |             384 |            2233 |             753 |
+|      2^24 |    TOO LONG |                209 |            3418 |            1416 |             518 |             766 |            3599 |            1920 |
+|      2^25 |    TOO LONG |                492 |            7411 |            3275 |            1836 |            1846 |            6384 |            4048 |
+|      2^26 |    TOO LONG |                898 |           14548 |            5385 |            5075 |            3655 |           13266 |           20333 |
+|      2^27 |    TOO LONG |               1738 |             OOM |             OOM |            9850 |           10912 |           33434 |             OOM |
+
 
 At 2^23, the naive Java String concatenation took long to run.
 I gave up at 2^22 when it took over 2 hours!
