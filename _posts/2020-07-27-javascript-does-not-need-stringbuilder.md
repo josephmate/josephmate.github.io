@@ -53,11 +53,53 @@ I measured how long it would take to do different powers of 10 of concatenations
 |      2^26 |    TOO LONG |                898 |           14548 |            5385 |            5075 |            3655 |
 |      2^27 |    TOO LONG |               1738 |             OOM |             OOM |            9850 |           10912 |
 
-If you would like to checkout a copy of the source code take a look at [my repo](https://github.com/josephmate/JavaVsJavascriptStringBuilder).
+If you would like to checkout a copy of the source code take a look at the last two sections (Java source and Javascript source) of this page or check [my repo](https://github.com/josephmate/JavaVsJavascriptStringBuilder).
 
-<details>
-<summary>Click to see the java source code of the experiment</summary>
 
+
+You can try out the javascript experiment in your browser at my [git hub page](https://josephmate.github.io/JavaVsJavascriptStringBuilder/).
+
+
+
+# Why Javascript Does not Need a StringBuilder
+
+Following the experiments, I wanted to know why.
+My research led me to [this email chain](https://www.mail-archive.com/es-discuss@mozilla.org/msg10071.html) where Dr. Axel Rauschmayer
+proposes adding StringBuilder to the next version of ECMAScript,
+> Is this worthy of ES.next support? Or does it belong into a library?
+> 
+> The two concatenation approaches I know of are:
+> 1. via +=
+> 2. push() into an array, join() it after the last push()
+> 
+> (1) can’t possibly be efficient, but if (2) is OK on all(!) platforms, then a 
+> library would be OK. However, given how frequently this is used, I would like 
+> this to become part of the standard library.
+
+[Tom Schuster responds](https://www.mail-archive.com/es-discuss@mozilla.org/msg10129.html) that it's no necessary.
+> (1) is in  fact really good optimized in modern engines.  (In case you
+are interested search for "Ropes: an alternative to strings")
+> 
+> I think today it's not a very good idea to propose methods on probably
+existing performance problems.
+
+I did more digging and learned the ropes are a datastructure the allow immutable String concatenations in O(lgN) time.
+
+https://hg.mozilla.org/mozilla-central/file/tip/js/src/vm/StringType.h#l73
+
+>    To avoid O(n^2) char buffer copying, a "rope" node (JSRope) can be created
+>    to represent a delayed string concatenation. Concatenation (called
+>    flattening) is performed if and when a linear char array is requested. In
+>    general, ropes form a binary dag whose internal nodes are JSRope string
+>    headers with no associated char array and whose leaf nodes are linear
+>    strings.
+
+# Discussion
+Could Java implement a similar optimization to the JVM?
+
+Are ropes good enough? At 2^24 to 2^27 we're measuring the concatinations in seconds! You could argue that's good enough because that's the memory limit of the browser. What about javascript that does not run the in browser but in the backend? Can we do better?
+
+# Java source
 
 ```java
 public static void main(String [] args) {
@@ -110,12 +152,8 @@ public static void runStringBuilderExperiment(int base, int power, int size) {
     System.out.println(String.format("builder %d^%d %d %d %d", base, power, size, result.length(), duration));
 }
 ```
-</details>
 
-<p>You can try out the javascript experiment in your browser at my [git hub page](https://josephmate.github.io/JavaVsJavascriptStringBuilder/).</p>
-
-<details>
-<summary>Click to see the javascript source code of the experiment</summary>
+# Javascript source
 
 ```javascript
 function runConcatExperiment(size) {
@@ -174,43 +212,3 @@ function runExperiment() {
     }
 }
 ```
-</details>
-
-
-# Why Javascript Does not Need a StringBuilder
-
-Following the experiments, I wanted to know why.
-My research led me to [this email chain](https://www.mail-archive.com/es-discuss@mozilla.org/msg10071.html) where Dr. Axel Rauschmayer
-proposes adding StringBuilder to the next version of ECMAScript,
-> Is this worthy of ES.next support? Or does it belong into a library?
-> 
-> The two concatenation approaches I know of are:
-> 1. via +=
-> 2. push() into an array, join() it after the last push()
-> 
-> (1) can’t possibly be efficient, but if (2) is OK on all(!) platforms, then a 
-> library would be OK. However, given how frequently this is used, I would like 
-> this to become part of the standard library.
-
-[Tom Schuster responds](https://www.mail-archive.com/es-discuss@mozilla.org/msg10129.html) that it's no necessary.
-> (1) is in  fact really good optimized in modern engines.  (In case you
-are interested search for "Ropes: an alternative to strings")
-> 
-> I think today it's not a very good idea to propose methods on probably
-existing performance problems.
-
-I did more digging and learned the ropes are a datastructure the allow immutable String concatenations in O(lgN) time.
-
-https://hg.mozilla.org/mozilla-central/file/tip/js/src/vm/StringType.h#l73
-
->    To avoid O(n^2) char buffer copying, a "rope" node (JSRope) can be created
->    to represent a delayed string concatenation. Concatenation (called
->    flattening) is performed if and when a linear char array is requested. In
->    general, ropes form a binary dag whose internal nodes are JSRope string
->    headers with no associated char array and whose leaf nodes are linear
->    strings.
-
-# Discussion
-Could Java implement a similar optimization to the JVM?
-
-Are ropes good enough? At 2^24 to 2^27 we're measuring the concatinations in seconds! You could argue that's good enough because that's the memory limit of the browser. What about javascript that does not run the in browser but in the backend? Can we do better?
