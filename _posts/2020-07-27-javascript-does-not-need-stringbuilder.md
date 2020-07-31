@@ -66,14 +66,12 @@ I gave up at 2^22 when it took over 2 hours!
 Each doubling of the input size results in more than double the 
 However, with javascript it's hard to tell.
 The growth looks kind of linear but maybe log linear.
+Lets investigate with a plot.
+We won't plot the naive Java concatenation since it grows too quickly and the scale would make it difficult to analyze the growth of the remaining methods.
 
 <script src="https://d3js.org/d3.v4.js"></script>
 <!-- Color Scale -->
 <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
-
-
-<div id="javaNaiveChart"></div>
-<!--   "Java naive += (ms)",  -->
 
 <div id="chart"></div>
 
@@ -93,10 +91,6 @@ function toClassName(humanReadableString) {
     .replace("(", "")
     .replace(")", "")
     .replace(".", "")
-    .replace(" ", "")
-    .replace(" ", "")
-    .replace(" ", "")
-    .replace(" ", "")
      ;
 }
 
@@ -235,6 +229,9 @@ d3.csv("/data/2020-07-28_experiment_data.csv", function(data) {
 });
 </script>
 
+After plotting, the growth looks linear for all of these variations.
+However, it's best to keep reading for a bit of complexity analysis.
+
 # Why Javascript Does not Need a StringBuilder
 
 Following the experiments, I wanted to know why.
@@ -268,10 +265,18 @@ https://hg.mozilla.org/mozilla-central/file/tip/js/src/vm/StringType.h#l73
 >    headers with no associated char array and whose leaf nodes are linear
 >    strings.
 
+Details about the [the rope data structure](https://en.wikipedia.org/wiki/Rope_(data_structure)) are available on Wikipedia.
+Concetenation takes O(lgN) time where N is the number of concats in the rope so far.
+As a result, to concat N times, the complexity is O( sum from 1 to N (lg N)) which O(N lg N ) as explained in this [Stackoverflow article](https://stackoverflow.com/questions/38849052/time-complexity-with-log-in-loop).
+It's not as good as using a StringBuilder for really large data, but for the number of concatenations that will work in the browser (2^27), rope is good enough because it looks linear.
+However, if you plan to need more than that, you better use a builder.
+
 # Discussion
 Could Java implement a similar optimization to the JVM so that people who overlook this mistake aren't hit with an O(N^2) but a O(NlgN) algorithm instead?
 
-Are ropes good enough? At 2^24 to 2^27 we're measuring the concatinations in seconds! You could argue that's good enough because that's the memory limit of the browser. What about javascript that does not run the in browser but in the backend? Can we do better?
+Are ropes good enough? At 2^24 to 2^27 we're measuring the concatenations in seconds and the growth appears linear until that point.
+You could argue that's good enough because that's the memory limit of the browser.
+What about javascript that does not run the in browser but in the backend? Can we do better?
 
 # Java source
 
