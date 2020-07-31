@@ -67,6 +67,174 @@ Each doubling of the input size results in more than double the
 However, with javascript it's hard to tell.
 The growth looks kind of linear but maybe log linear.
 
+<script src="https://d3js.org/d3.v4.js"></script>
+<!-- Color Scale -->
+<script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+
+
+<div id="javaNaiveChart"></div>
+<!--   "Java naive += (ms)",  -->
+
+<div id="chart"></div>
+
+<script>
+
+// https://stackoverflow.com/questions/448981/which-characters-are-valid-in-css-class-names-selectors
+// begin with underscore (_), a hyphen (-), or a letter(a–z),
+// followed by any number of hyphens, underscores, letters, or numbers
+// if the first character is a hyphen, the second character must2 be a letter or underscore
+// name must be at least 2 characters long
+function toClassName(humanReadableString) {
+  return humanReadableString
+    .replace("#", "")
+    .replace(" ", "")
+    .replace("+", "")
+    .replace("=", "")
+    .replace("(", "")
+    .replace(")", "")
+    .replace(".", "")
+    .replace(" ", "")
+    .replace(" ", "")
+    .replace(" ", "")
+    .replace(" ", "")
+     ;
+}
+
+// based on
+// https://www.d3-graph-gallery.com/graph/connectedscatter_legend.html
+// 1. modified the legend to display vertically since there's more lines
+// and more text
+// 2. sanitize column names for use in CSS class selectors
+// 3. last value is missing, so use a loop to find the last value instead
+var margin = {top: 10, right: 100, bottom: 30, left: 100},
+    width = 700 - margin.left - margin.right,
+    height = 700 - margin.top - margin.bottom;
+
+var svg = d3.select("#chart")
+  .append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform",
+          "translate(" + margin.left + "," + margin.top + ")");
+
+
+//Read the data
+d3.csv("/data/2020-07-28_experiment_data.csv", function(data) {
+
+    // List of groups (here I have one group per column)
+    var allGroup = [
+      "Java StringBuilder (ms)",
+      "Chrome Javascript naive += (ms)",
+      "Chrome Javascript Array.join (ms)",
+      "Firefox Javascript naive += (ms)",
+      "Firefox Javascript Array.join (ms)",
+      "NodeJS Javascript naive += (ms)",
+      "NodeJS Javascript Array.join (ms)"
+]
+
+    // Reformat the data: we need an array of arrays of {x, y} tuples
+    var dataReady = allGroup.map( function(grpName) { // .map allows to do something for each element of the list
+      return {
+        name: grpName,
+        values: data.map(function(d) {
+          return {time: d["# concats"], value: +d[grpName]};
+        })
+      };
+    });
+    // I strongly advise to have a look to dataReady with
+    console.log(dataReady)
+
+    // A color scale: one color for each group
+    var myColor = d3.scaleOrdinal()
+      .domain(allGroup)
+      .range(d3.schemeSet2);
+
+    // Add X axis --> it is a date format
+    var x = d3.scaleLinear()
+      .domain([0,134217728])
+      .range([ 0, width ]);
+    svg.append("g")
+      .attr("transform", "translate(0," + height + ")")
+      .call(d3.axisBottom(x));
+
+    // Add Y axis
+    var y = d3.scaleLinear()
+      .domain( [0,33434])
+      .range([ height, 0 ]);
+    svg.append("g")
+      .call(d3.axisLeft(y));
+
+    // Add the lines
+    var line = d3.line()
+      .x(function(d) { return x(+d.time) })
+      .y(function(d) { return y(+d.value) })
+    svg.selectAll("myLines")
+      .data(dataReady)
+      .enter()
+      .append("path")
+        .attr("class", function(d){ return toClassName(d.name) })
+        .attr("d", function(d){ return line(d.values) } )
+        .attr("stroke", function(d){ return myColor(d.name) })
+        .style("stroke-width", 4)
+        .style("fill", "none")
+
+    // Add the points
+    svg
+      // First we need to enter in a group
+      .selectAll("myDots")
+      .data(dataReady)
+      .enter()
+        .append('g')
+        .style("fill", function(d){ return myColor(d.name) })
+        .attr("class", function(d){ return toClassName(d.name) })
+      // Second we need to enter in the 'values' part of this group
+      .selectAll("myPoints")
+      .data(function(d){ return d.values })
+      .enter()
+      .append("circle")
+        .attr("cx", function(d) { return x(d.time) } )
+        .attr("cy", function(d) { return y(d.value) } )
+        .attr("r", 5)
+        .attr("stroke", "white")
+
+    // Add a label at the end of each line
+    svg
+      .selectAll("myLabels")
+      .data(dataReady)
+      .enter()
+        .append('g')
+        .append("text")
+          .attr("class", function(d){ return toClassName(d.name) })
+          .datum(function(d) { return {name: d.name, value: d.values[d.values.length - 1]}; }) // keep only the last value of each time series
+          .attr("transform", function(d) { return "translate(" + x(d.value.time) + "," + y(d.value.value) + ")"; }) // Put the text at the position of the last point
+          .attr("x", 12) // shift the text a bit more right
+          .text(function(d) { return d.name; })
+          .style("fill", function(d){ return myColor(d.name) })
+          .style("font-size", 15)
+
+    // Add a legend (interactive)
+    svg
+      .selectAll("myLegend")
+      .data(dataReady)
+      .enter()
+        .append('g')
+        .append("text")
+          .attr('x', function(d,i){ return 30 })
+          .attr('y', function(d,i){ return 30 + i*20})
+          .text(function(d) { return d.name; })
+          .style("fill", function(d){ return myColor(d.name) })
+          .style("font-size", 15)
+        .on("click", function(d){
+          // is the element currently visible ?
+          currentOpacity = d3.selectAll("." + toClassName(d.name)).style("opacity")
+          // Change the opacity: from 0 to 1 or from 1 to 0
+          d3.selectAll("." + toClassName(d.name)).transition().style("opacity", currentOpacity == 1 ? 0:1)
+
+        })
+});
+</script>
+
 # Why Javascript Does not Need a StringBuilder
 
 Following the experiments, I wanted to know why.
@@ -82,7 +250,7 @@ proposes adding StringBuilder to the next version of ECMAScript,
 > library would be OK. However, given how frequently this is used, I would like 
 > this to become part of the standard library.
 
-[Tom Schuster responds](https://www.mail-archive.com/es-discuss@mozilla.org/msg10129.html) that it's no necessary.
+[Tom Schuster responds](https://www.mail-archive.com/es-discuss@mozilla.org/msg10129.html) that it's not necessary.
 > (1) is in  fact really good optimized in modern engines.  (In case you
 are interested search for "Ropes: an alternative to strings")
 > 
