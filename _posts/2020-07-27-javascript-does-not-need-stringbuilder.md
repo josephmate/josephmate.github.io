@@ -150,7 +150,8 @@ d3.csv("/data/2020-07-28_experiment_data.csv", function(data) {
       .range([ 0, width ]);
     svg.append("g")
       .attr("transform", "translate(0," + height + ")")
-      .call(d3.axisBottom(x));
+      // https://observablehq.com/@d3/axis-ticks
+      .call(d3.axisBottom(x).ticks(10, "s"));
 
     // Add Y axis
     var y = d3.scaleLinear()
