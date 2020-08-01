@@ -277,7 +277,7 @@ existing performance problems.
 
 I did more digging and learned the ropes are a datastructure the allow immutable String concatenations in O(lgN) time.
 
-https://hg.mozilla.org/mozilla-central/file/tip/js/src/vm/StringType.h#l73
+[Firefox's Javascript VM's sourcecode](https://hg.mozilla.org/mozilla-central/file/tip/js/src/vm/StringType.h#l73) comments on what Tom Schuster was saying the email chain.
 
 >    To avoid O(n^2) char buffer copying, a "rope" node (JSRope) can be created
 >    to represent a delayed string concatenation. Concatenation (called
