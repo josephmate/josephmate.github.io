@@ -290,12 +290,74 @@ As a result, to concat N times, the complexity is O( sum from 1 to N (lg N)) whi
 It's not as good as using a StringBuilder for really large data, but for the number of concatenations that will work in the browser (2^27), rope is good enough because it looks linear.
 However, if you plan to need more than that, you better use a builder.
 
+# Javascript StringBulder
+
+I tried implementing my own StringBuilder for fun to see if I could approve upon the 10 seconds it takes to append and failed.
+My version of StringBuilder in Firefox took over 70 seconds to handle 2^27 concatenations.
+It was also a pain to implement.
+Javascript provides a couple ways of creating strings directly from arrays.
+
+The first I tried was `String.fromCharCode`.
+This method looked like it would be faster; however, at 2^17 it fails with `Uncaught RangeError: Maximum call stack size exceeded`
+because `String.fromCharCode` use function parameter arguments.
+As a result, when you use `...` array expansion or `Function.apply`, you blow up your stack.
+
+In my second attempt, I tried using [TextDecoder](https://developer.mozilla.org/en-US/docs/Web/API/TextDecoder) and [TextEncoder](https://developer.mozilla.org/en-US/docs/Web/API/TextEncoder).
+In Firefox took over 70 seconds to handle 2^27 concatenations!
+
+As a result, you cannot yet implement a StringBuilder that's as efficient as Java within Javascript.
+You might be able to use `WASM` to get that last bit of performance.
+I may try that for a future article.
+
+```javascript
+function StringBuilder() {
+
+    // cannot use String.fromCharCode due to
+    // Uncaught RangeError: Maximum call stack size exceeded
+    // so we are stuck with TextEncoder and TextDecoder
+    // https://developer.mozilla.org/en-US/docs/Web/API/TextDecoder
+    // https://developer.mozilla.org/en-US/docs/Web/API/TextEncoder
+    let utf8Decoder = new TextDecoder();
+    let utf8Encoder = new TextEncoder();
+
+    this.bufferConsumed = 0;
+    this.capacity = 128;
+    this.buffer = new Uint8Array(128);
+
+    this.append = function (strToAdd) {
+        // O(N) copy but ammortized to O(1) over all concats
+        var encodedStr = utf8Encoder.encode(strToAdd);
+        while (encodedStr.length + this.bufferConsumed > this.capacity) {
+            var tmpBuffer = this.buffer;
+            this.buffer = new Uint8Array(this.capacity*2);
+            this.capacity = this.capacity*2;
+            for(var i = 0; i < this.bufferConsumed; i++) {
+                this.buffer[i] = tmpBuffer[i];
+            }
+        }
+
+        // add the characters to the end
+        for(var i = 0; i < encodedStr.length; i++) {
+            this.buffer[i+this.bufferConsumed] = encodedStr[i];
+        }
+        this.bufferConsumed += encodedStr.length;
+
+        return this;
+    }
+
+    this.build = function() {
+        return utf8Decoder.decode(this.buffer.slice(0, this.bufferConsumed));
+    }
+}
+```
+
 # Discussion
 Could Java implement a similar optimization to the JVM so that people who overlook this mistake aren't hit with an O(N^2) but a O(NlgN) algorithm instead?
 
-Are ropes good enough? At 2^24 to 2^27 we're measuring the concatenations in seconds and the growth appears linear until that point.
+Are ropes good enough? At 2^24 to 2^27 we're measuring the concatenations in seconds and the growth appears linear until that point even though asymptotically it is not.
 You could argue that's good enough because that's the memory limit of the browser.
-What about javascript that does not run the in browser but in the backend? Can we do better?
+
+Would a StringBuilder implemented in WASM perform significantly better than += and Array.join? Would it be benefitial when you need more than 2^27 concatenations when the extra lgN factor causes issues?
 
 # Java source
 
@@ -351,7 +413,7 @@ public static void runStringBuilderExperiment(int base, int power, int size) {
 }
 ```
 
-# Javascript source
+# Javascript Naive Concat and Array.join Source
 
 ```javascript
 function runConcatExperiment(size) {
