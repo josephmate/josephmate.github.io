@@ -1,4 +1,4 @@
-# concats exponent,# concats,Java naive += (ms),Java StringBuilder (ms),Chrome Javascript naive += (ms),Chrome Javascript Array.join (ms),Firefox Javascript naive += (ms), Firefox Javascript Array.join (ms),NodeJS Javascript naive += (ms), NodeJS Javascript Array.join (ms)
+# concats exponent,# concats,Java naive += (ms),Java StringBuilder (ms),Chrome Javascript naive += (ms),Chrome Javascript Array.join (ms),Firefox Javascript naive += (ms),Firefox Javascript Array.join (ms),NodeJS Javascript naive += (ms),NodeJS Javascript Array.join (ms)
 2^10,              1024      ,            4 ,                  0 ,               0 ,               0 ,               0 ,               0 ,               1 ,               0 
 2^11,              2048      ,           12 ,                  0 ,               0 ,               0 ,               0 ,               0 ,               1 ,               0 
 2^12,              4096      ,           28 ,                  0 ,               1 ,               0 ,               0 ,               0 ,               1 ,               1 

@@ -150,7 +150,7 @@ d3.csv("/data/2020-07-28_experiment_data.csv", function(data) {
       };
     });
     // I strongly advise to have a look to dataReady with
-    // console.log(dataReady)
+    console.log(dataReady)
 
     // A color scale: one color for each group
     var myColor = d3.scaleOrdinal()
