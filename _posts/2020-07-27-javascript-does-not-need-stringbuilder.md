@@ -133,7 +133,7 @@ d3.csv("/data/2020-07-28_experiment_data.csv", function(data) {
 
     // List of groups (here I have one group per column)
     var allGroup = [
-      "Java StringBuilder (ms)",
+      "Java8 StringBuilder (ms)",
       "Chrome Javascript naive += (ms)",
       "Chrome Javascript Array.join (ms)",
       "Firefox Javascript naive += (ms)",
