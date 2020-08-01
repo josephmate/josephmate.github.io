@@ -94,6 +94,19 @@ function toClassName(humanReadableString) {
      ;
 }
 
+function isNumber(value) {
+  return Number.isFinite(value);
+}
+
+function lastNumberPoint(dataPoints) {
+  for (var i = dataPoints.length - 1; i >= 0; i--) {
+    if (isNumber(dataPoints[i].value)) {
+      return dataPoints[i];
+    }
+  }
+  return dataPoints[dataPoints.length - 1];
+}
+
 // based on
 // https://www.d3-graph-gallery.com/graph/connectedscatter_legend.html
 // 1. modified the legend to display vertically since there's more lines
@@ -137,7 +150,7 @@ d3.csv("/data/2020-07-28_experiment_data.csv", function(data) {
       };
     });
     // I strongly advise to have a look to dataReady with
-    console.log(dataReady)
+    // console.log(dataReady)
 
     // A color scale: one color for each group
     var myColor = d3.scaleOrdinal()
@@ -201,10 +214,15 @@ d3.csv("/data/2020-07-28_experiment_data.csv", function(data) {
         .append('g')
         .append("text")
           .attr("class", function(d){ return toClassName(d.name) })
-          .datum(function(d) { return {name: d.name, value: d.values[d.values.length - 1]}; }) // keep only the last value of each time series
-          .attr("transform", function(d) { return "translate(" + x(d.value.time) + "," + y(d.value.value) + ")"; }) // Put the text at the position of the last point
+          .datum(function(d) { return {name: d.name, value: lastNumberPoint(d.values)}; }) // keep only the last value of each time series
+          .attr("transform", function(d) { 
+            if ( d.value.value > 30000) {
+            return "translate(" + x(d.value.time-30000000) + "," + y(d.value.value-1000) + ")"; 
+            }
+            return "translate(" + x(d.value.time-30000000) + "," + y(d.value.value+1000) + ")"; 
+            }) // Put the text at the position of the last point
           .attr("x", 12) // shift the text a bit more right
-          .text(function(d) { return d.name; })
+          .text(function(d) { return d.name.replace(" (ms)", ""); })
           .style("fill", function(d){ return myColor(d.name) })
           .style("font-size", 15)
 
