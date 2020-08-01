@@ -22,21 +22,23 @@ Many books, articles, blog posts and stack overflow questions have extensively c
 [8](https://stackoverflow.com/questions/1532461/stringbuilder-vs-string-concatenation-in-tostring-in-java).
 
 Now you can see why it came as such a shock to me.
-I assumed javascript would do the same thing as java to maintain the immutability of strings.
+I assumed Javascript would do the same thing as Java to maintain the immutability of strings.
 Java allocates a new array containing the result of each successive concatenation resulting in the O(N^2) runtime complexity.
 
 # Experiments
 When I first learned this from a co-worker, I couldn't believe it!
 I put together some experiments to confirm.
-I measured how long it would take to do different powers of 10 of concatenations in Java and javascript.
+I measured how long it would take to do different powers of 2 of concatenations in Java and Javascript.
+I am not interested in a comparison between the languages.
+I am curious about how runtime grows as the number of concatenations grows.
 
 If you would like to checkout a copy of the source code take a look at the last two sections (Java source and Javascript source) of this page or check [my repo](https://github.com/josephmate/JavaVsJavascriptStringBuilder).
 
-You can try out the javascript experiment in your browser at my [git hub page](https://josephmate.github.io/JavaVsJavascriptStringBuilder/).
+You can try out the Javascript experiment in your browser at my [git hub page](https://josephmate.github.io/JavaVsJavascriptStringBuilder/).
 
 
 I've summarized how long each number of concats took in the table below.
-I looked at using naive += String concatenation, Java's StringBuilder, and javascript's Array.join.
+I looked at using naive += String concatenation, Java's StringBuilder, and Javascript's Array.join.
 
 |           |               |                    | Chrome          | Chrome          | Firefox         | Firefox         | NodeJS          | NodeJS          |
 |           | Java          | Java               | Javascript      | Javascript      | Javascript      | Javascript      | Javascript      | Javascript      |
@@ -63,8 +65,8 @@ I looked at using naive += String concatenation, Java's StringBuilder, and javas
 
 At 2^23, the naive Java String concatenation took long to run.
 I gave up at 2^22 when it took over 2 hours!
-Each doubling of the input size results in more than double the 
-However, with javascript it's hard to tell.
+Each doubling of the input size results in more than double the runtime, as we expected because of the O(N^2) complexity.
+However, with Javascript it's hard to tell.
 The growth looks kind of linear but maybe log linear.
 Lets investigate with a plot.
 We won't plot the naive Java concatenation since it grows too quickly and the scale would make it difficult to analyze the growth of the remaining methods.
@@ -286,13 +288,14 @@ https://hg.mozilla.org/mozilla-central/file/tip/js/src/vm/StringType.h#l73
 
 Details about the [the rope data structure](https://en.wikipedia.org/wiki/Rope_(data_structure)) are available on Wikipedia.
 Concetenation takes O(lgN) time where N is the number of concats in the rope so far.
-As a result, to concat N times, the complexity is O( sum from 1 to N (lg N)) which O(N lg N ) as explained in this [Stackoverflow article](https://stackoverflow.com/questions/38849052/time-complexity-with-log-in-loop).
-It's not as good as using a StringBuilder for really large data, but for the number of concatenations that will work in the browser (2^27), rope is good enough because it looks linear.
+As a result, to concat N times, the complexity is O( sum from 1 to N (lg N)) which is O(N lg N ) as explained in this [Stackoverflow article](https://stackoverflow.com/questions/38849052/time-complexity-with-log-in-loop).
+It's not as good as using a StringBuilder for really large data, which amoritzes to O(N)
+However, for the number of concatenations that will work in the browser (2^27), the rope is good enough because behaves linearly until then.
 However, if you plan to need more than that, you better use a builder.
 
 # Javascript StringBulder
 
-I tried implementing my own StringBuilder for fun to see if I could approve upon the 10 seconds it takes to append and failed.
+I tried implementing my own StringBuilder for fun to see if I could improve upon the 10 seconds it takes in Firefox and failed.
 My version of StringBuilder in Firefox took over 70 seconds to handle 2^27 concatenations.
 It was also a pain to implement.
 Javascript provides a couple ways of creating strings directly from arrays.
