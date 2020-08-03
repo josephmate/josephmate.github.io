@@ -9,6 +9,7 @@ categories: [Java, Javascript, StringBuilder]
 
 Today I learned that Javascript does not need a StringBuilder for accumulating a large number of concatinations.
 As a Java programmer, that came as a shock to me.
+This article summarizes my exploration of this fact.
 
 # Effective Java
 A StringBuilder is grilled into Java programmers. Effective Java says, "Item 51: Beware the performance of string concatenation."
