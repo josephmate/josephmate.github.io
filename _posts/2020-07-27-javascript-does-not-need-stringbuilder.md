@@ -292,9 +292,9 @@ I did more digging and learned that ropes are a datastructure the allow immutabl
 Details about the [the rope data structure](https://en.wikipedia.org/wiki/Rope_(data_structure)) are available on Wikipedia.
 Concetenation takes O(lgN) time where N is the number of concats in the rope so far.
 As a result, to concat N times, the complexity is O( sum from 1 to N (lg N)) which is O(N lg N ) as explained in this [Stackoverflow article](https://stackoverflow.com/questions/38849052/time-complexity-with-log-in-loop).
-It's not as good as using a StringBuilder for really large data, which amoritzes to O(N)
+It's not as good as using a StringBuilder for really large data, which amoritzes to O(N).
 However, for the number of concatenations that will work in the browser (2^27), the rope is good enough because behaves linearly until then.
-However, if you plan to need more than that, you better use a builder.
+If you plan to need more than that, at some point it will be better to use a builder.
 
 # Javascript StringBulder
 
@@ -322,7 +322,7 @@ You could argue that's good enough because that's the memory limit of the browse
 
 Would a StringBuilder implemented in WASM perform significantly better than `+=` and `Array.join` if there was a sufficient amount of concatenations?
 Unfortunately, I was limited to 2^27 concatenations before running out of memory.
-If was able to exceed that memory limit, I expect that WASM, and even my Javascript StringBuilder to eventually perform better due to the O(N) versus O(NlgN) complexity.
+If I was able to exceed that memory limit, I expect that WASM, and even my Javascript StringBuilder to eventually perform better due to the O(N) versus O(NlgN) complexity.
 
 Finally, would we see a performance improvement if we implemented a StringBuilder in the javascript virtual machine instead of JSRope and rebuilt the browser?
 
