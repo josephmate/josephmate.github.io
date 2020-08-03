@@ -12,15 +12,17 @@ As a Java programmer, that came as a shock to me.
 This article summarizes my exploration of this fact.
 
 # Effective Java
-A StringBuilder is grilled into Java programmers. Effective Java says, "Item 51: Beware the performance of string concatenation."
+A StringBuilder is grilled into Java programmers. Effective Java
+[[1]](https://www.amazon.ca/Effective-Java-3rd-Joshua-Bloch/dp/0134685997)
+says, "Item 51: Beware the performance of string concatenation."
 Many books, articles, blog posts and stack overflow questions have extensively covered this in detail 
-[2](http://www.thefinestartist.com/effective-java/51)
-[3](http://jtechies.blogspot.com/2012/07/item-51-beware-performance-of-string.html)
-[4](https://www.corejavaguru.com/effective-java/items/51)
-[5](https://dzone.com/articles/string-concatenation-performacne-improvement-in-ja)
-[6](https://stackoverflow.com/questions/4645020/when-to-use-stringbuilder-in-java)
-[7](https://stackoverflow.com/questions/10078912/best-practices-performance-mixing-stringbuilder-append-with-string-concat)
-[8](https://stackoverflow.com/questions/1532461/stringbuilder-vs-string-concatenation-in-tostring-in-java).
+[[2]](http://www.thefinestartist.com/effective-java/51)
+[[3]](http://jtechies.blogspot.com/2012/07/item-51-beware-performance-of-string.html)
+[[4]](https://www.corejavaguru.com/effective-java/items/51)
+[[5]](https://dzone.com/articles/string-concatenation-performacne-improvement-in-ja)
+[[6]](https://stackoverflow.com/questions/4645020/when-to-use-stringbuilder-in-java)
+[[7]](https://stackoverflow.com/questions/10078912/best-practices-performance-mixing-stringbuilder-append-with-string-concat)
+[[8]](https://stackoverflow.com/questions/1532461/stringbuilder-vs-string-concatenation-in-tostring-in-java).
 
 Now you can see why it came as such a shock to me.
 I assumed Javascript would do the same thing as Java to maintain the immutability of strings.
@@ -60,11 +62,12 @@ At 2^23, the naive Java String concatenation took too long to run.
 I gave up at 2^22 when it took over 2 hours!
 Each doubling of the input size results in more than double the runtime, as we expected because of the O(N^2) complexity.
 I tested both Java8 and and Java14, expecting it to be optimized.
-Even though these articles
-((1)[https://stackoverflow.com/questions/1532461/stringbuilder-vs-string-concatenation-in-tostring-in-java/1532499#1532499],
-(2)[https://stackoverflow.com/questions/14927630/java-string-concat-vs-stringbuilder-optimised-so-what-should-i-do])
-say its been optimized, the optimization cannot fix the concatenation in the loop.
-However (JEP 280: Indify String Concatenation)[http://openjdk.java.net/jeps/280] has laid the groundwork to more easily optimize String concatenation without having to change the bytecode.
+Even though these stack overflow articles
+[[9]](https://stackoverflow.com/questions/1532461/stringbuilder-vs-string-concatenation-in-tostring-in-java/1532499#1532499) and
+[[10]](https://stackoverflow.com/questions/14927630/java-string-concat-vs-stringbuilder-optimised-so-what-should-i-do)
+say its been optimized, the optimization does not fix the concatenation in the loop.
+I believe the optimization cannot apply over multiple statements, only with in a single statement.
+However [JEP 280: Indify String Concatenation](http://openjdk.java.net/jeps/280) has laid the groundwork to more easily optimize String concatenation in the future without having to tweak the the bytecode on the compiler.
 
 With Javascript the growth looks kind of linear.
 Lets investigate with a plot.
