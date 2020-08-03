@@ -484,7 +484,7 @@ function StringBuilder() {
 ```
 
 # Rust WASM String
-```
+```rust
 mod utils;
 
 use wasm_bindgen::prelude::*;
