@@ -40,28 +40,18 @@ You can try out the Javascript experiment in your browser at my [git hub page](h
 I've summarized how long each number of concats took in the table below.
 I looked at using naive += String concatenation, Java's StringBuilder, and Javascript's Array.join.
 
-|           |               |                    | Chrome          | Chrome          | Firefox         | Firefox         | NodeJS          | NodeJS          |
-|           | Java          | Java               | Javascript      | Javascript      | Javascript      | Javascript      | Javascript      | Javascript      |
-| # concats | naive += (ms) | StringBuilder (ms) | naive += (ms)   | Array.join (ms) | naive += (ms)   | Array.join (ms) | naive += (ms)   | Array.join (ms) |
-|-----------|---------------|--------------------|-----------------|-----------------|-----------------|-----------------|-----------------|-----------------|
-|      2^10 |             4 |                  0 |               0 |               0 |               0 |               0 |               1 |               0 |
-|      2^11 |            12 |                  0 |               0 |               0 |               0 |               0 |               1 |               0 |
-|      2^12 |            28 |                  0 |               1 |               0 |               0 |               0 |               1 |               1 |
-|      2^13 |            99 |                  0 |               1 |               1 |               1 |               0 |               1 |               0 |
-|      2^14 |           374 |                  1 |               3 |               2 |               1 |               0 |               1 |               2 |
-|      2^15 |          1197 |                  2 |               2 |               2 |               2 |               1 |               4 |               4 |
-|      2^16 |          2961 |                  1 |               8 |               4 |               3 |               3 |              10 |               6 |
-|      2^17 |          4505 |                  3 |              15 |               8 |               6 |               4 |              29 |              12 |
-|      2^18 |         21945 |                  5 |              30 |              18 |              14 |              11 |              29 |              22 |
-|      2^19 |         94077 |                  6 |              79 |              37 |              12 |              18 |             112 |              54 |
-|      2^20 |        412675 |                 11 |             144 |              71 |              42 |              44 |             206 |              93 |
-|      2^21 |       1886317 |                 39 |             408 |             156 |              68 |              70 |             460 |             245 |
-|      2^22 |       8529431 |                 70 |             906 |             318 |             172 |             149 |             813 |             425 |
-|      2^23 |      TOO LONG |                119 |            1650 |             621 |             272 |             384 |            2233 |             753 |
-|      2^24 |      TOO LONG |                209 |            3418 |            1416 |             518 |             766 |            3599 |            1920 |
-|      2^25 |      TOO LONG |                492 |            7411 |            3275 |            1836 |            1846 |            6384 |            4048 |
-|      2^26 |      TOO LONG |                898 |           14548 |            5385 |            5075 |            3655 |           13266 |           20333 |
-|      2^27 |      TOO LONG |               1738 |             OOM |             OOM |            9850 |           10912 |           33434 |             OOM |
+
+|                                   | # Concats |       |        |         |         |          |          |          |          |          |
+| Algorithm                         | 2^18      |  2^19 | 2^20   | 2^21    | 2^22    | 2^23     | 2^24     | 2^25     | 2^26     | 2^27     |
+|-----------------------------------|----------:|------:|-------:|--------:|--------:|---------:|---------:|---------:|---------:|---------:|
+| Java naive += (ms)                | 21945     | 94077 | 412675 | 1886317 | 8529431 | TOO LONG | TOO LONG | TOO LONG | TOO LONG | TOO LONG |
+| Java StringBuilder (ms)           | 5         |     6 |     11 |      39 |      70 |      119 |      209 |      492 |      898 |     1738 |
+| Chrome Javascript naive += (ms)   | 30        |    79 |    144 |     408 |     906 |     1650 |     3418 |     7411 |    14548 |      OOM |
+| Chrome Javascript Array.join (ms) | 18        |    37 |     71 |     156 |     318 |      621 |     1416 |     3275 |     5385 |      OOM |
+| Chrome Javascript Array.join (ms) | 14        |    12 |     42 |      68 |     172 |      272 |      518 |     1836 |     5075 |     9850 |
+| Chrome Javascript Array.join (ms) | 11        |    18 |     44 |      70 |     149 |      384 |      766 |     1846 |     3655 |    10912 |
+| Chrome Javascript Array.join (ms) | 29        |   112 |    206 |     460 |     813 |     2233 |     3599 |     6384 |    13266 |    33434 |
+| Chrome Javascript Array.join (ms) | 22        |    54 |     93 |     245 |     425 |      753 |     1920 |     4048 |    20333 |      OOM |
 
 At 2^23, the naive Java String concatenation took long to run.
 I gave up at 2^22 when it took over 2 hours!
