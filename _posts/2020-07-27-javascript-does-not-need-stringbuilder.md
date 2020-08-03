@@ -247,7 +247,7 @@ However, it's best to keep reading for a bit of complexity analysis.
 
 Following the experiments, I wanted to know why.
 My research led me to [this email chain](https://www.mail-archive.com/es-discuss@mozilla.org/msg10071.html) where Dr. Axel Rauschmayer
-proposes adding StringBuilder to the next version of ECMAScript,
+proposes adding StringBuilder to the next version of ECMAScript:
 > Is this worthy of ES.next support? Or does it belong into a library?
 > 
 > The two concatenation approaches I know of are:
@@ -265,7 +265,7 @@ are interested search for "Ropes: an alternative to strings")
 > I think today it's not a very good idea to propose methods on probably
 existing performance problems.
 
-I did more digging and learned the ropes are a datastructure the allow immutable String concatenations in O(lgN) time.
+I did more digging and learned that ropes are a datastructure the allow immutable String concatenations in O(lgN) time.
 
 [Firefox's Javascript VM's sourcecode](https://hg.mozilla.org/mozilla-central/file/tip/js/src/vm/StringType.h#l73) comments on what Tom Schuster was saying the email chain.
 
@@ -291,24 +291,25 @@ Javascript provides a couple ways of creating strings directly from arrays.
 
 The first I tried was `String.fromCharCode`.
 This method looked like it would be faster; however, at 2^17 it fails with `Uncaught RangeError: Maximum call stack size exceeded`
-because `String.fromCharCode` use function parameter arguments.
+because `String.fromCharCode` uses function parameter arguments.
 As a result, when you use `...` array expansion or `Function.apply`, you blow up your stack.
 
 In my second attempt, I tried using [TextDecoder](https://developer.mozilla.org/en-US/docs/Web/API/TextDecoder) and [TextEncoder](https://developer.mozilla.org/en-US/docs/Web/API/TextEncoder).
-In Firefox took over 70 seconds to handle 2^27 concatenations! As a result, you cannot yet implement a StringBuilder that's as efficient as Java within Javascript.
+In Firefox took over 70 seconds to handle 2^27 concatenations! As a result, you cannot implement a StringBuilder efficiently in Javascript yet.
 
-I was able to improve the performance for 2^27 concatenations by using Rust's String which acts similarly to the Rust and connecting to Javascript through WASM.
-It only brought it down to 23 seconds, which is still worse than Javascript's += and Array.join. 
+I was able to improve the performance for 2^27 concatenations by using Rust's String and connecting it to Javascript through WASM.
+Rust's String acts similarly to Java's StringBuilder using an expanding buffer that amortizes each concat to be O(1) over all the concats.
+Unfortunately, it only brought it down to 23 seconds, which is still worse than Javascript's += and Array.join. 
 
 # Discussion
 Could Java implement a similar optimization to the JVM so that people who overlook this mistake aren't hit with an O(N^2) but a O(NlgN) algorithm instead?
 
-Are ropes good enough? At 2^24 to 2^27 we're measuring the concatenations in seconds and the growth appears linear until that point even though asymptotically it is not.
+Are ropes good enough? At 2^24 to 2^27 we're measuring the concatenations in seconds and the growth appears linear until that point even though asymptotically it is O(NlgN).
 You could argue that's good enough because that's the memory limit of the browser.
 
-Would a StringBuilder implemented in WASM perform significantly better than += and Array.join if there was a sufficient amount of concatenations?
+Would a StringBuilder implemented in WASM perform significantly better than `+=` and `Array.join` if there was a sufficient amount of concatenations?
 Unfortunately, I was limited to 2^27 concatenations before running out of memory.
-If was able to exceed that memory limit, I expect that WASM, and even my Javascript StringBuilder to eventually perform better due to the O(N) vs. O(NlgN) complexity.
+If was able to exceed that memory limit, I expect that WASM, and even my Javascript StringBuilder to eventually perform better due to the O(N) versus O(NlgN) complexity.
 
 Finally, would we see a performance improvement if we implemented a StringBuilder in the javascript virtual machine instead of JSRope and rebuilt the browser?
 
