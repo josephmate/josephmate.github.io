@@ -296,8 +296,7 @@ However, if you plan to need more than that, you better use a builder.
 # Javascript StringBulder
 
 I tried implementing my own StringBuilder for fun to see if I could improve upon the 10 seconds it takes in Firefox and failed.
-My version of StringBuilder in Firefox took over 70 seconds to handle 2^27 concatenations.
-It was also a pain to implement.
+My version of StringBuilder implemented in Javascript in Firefox took over 70 seconds to handle 2^27 concatenations.
 Javascript provides a couple ways of creating strings directly from arrays.
 
 The first I tried was `String.fromCharCode`.
@@ -306,53 +305,10 @@ because `String.fromCharCode` use function parameter arguments.
 As a result, when you use `...` array expansion or `Function.apply`, you blow up your stack.
 
 In my second attempt, I tried using [TextDecoder](https://developer.mozilla.org/en-US/docs/Web/API/TextDecoder) and [TextEncoder](https://developer.mozilla.org/en-US/docs/Web/API/TextEncoder).
-In Firefox took over 70 seconds to handle 2^27 concatenations!
+In Firefox took over 70 seconds to handle 2^27 concatenations! As a result, you cannot yet implement a StringBuilder that's as efficient as Java within Javascript.
 
-As a result, you cannot yet implement a StringBuilder that's as efficient as Java within Javascript.
-You might be able to use `WASM` to get that last bit of performance.
-I may try that for a future article.
-
-```javascript
-function StringBuilder() {
-
-    // cannot use String.fromCharCode due to
-    // Uncaught RangeError: Maximum call stack size exceeded
-    // so we are stuck with TextEncoder and TextDecoder
-    // https://developer.mozilla.org/en-US/docs/Web/API/TextDecoder
-    // https://developer.mozilla.org/en-US/docs/Web/API/TextEncoder
-    let utf8Decoder = new TextDecoder();
-    let utf8Encoder = new TextEncoder();
-
-    this.bufferConsumed = 0;
-    this.capacity = 128;
-    this.buffer = new Uint8Array(128);
-
-    this.append = function (strToAdd) {
-        // O(N) copy but ammortized to O(1) over all concats
-        var encodedStr = utf8Encoder.encode(strToAdd);
-        while (encodedStr.length + this.bufferConsumed > this.capacity) {
-            var tmpBuffer = this.buffer;
-            this.buffer = new Uint8Array(this.capacity*2);
-            this.capacity = this.capacity*2;
-            for(var i = 0; i < this.bufferConsumed; i++) {
-                this.buffer[i] = tmpBuffer[i];
-            }
-        }
-
-        // add the characters to the end
-        for(var i = 0; i < encodedStr.length; i++) {
-            this.buffer[i+this.bufferConsumed] = encodedStr[i];
-        }
-        this.bufferConsumed += encodedStr.length;
-
-        return this;
-    }
-
-    this.build = function() {
-        return utf8Decoder.decode(this.buffer.slice(0, this.bufferConsumed));
-    }
-}
-```
+I was able to improve the performance for 2^27 concatenations by using Rust's String which acts similarly to the Rust and connecting to Javascript through WASM.
+It only brought it down to 23 seconds, which is still worse than Javascript's += and Array.join. 
 
 # Discussion
 Could Java implement a similar optimization to the JVM so that people who overlook this mistake aren't hit with an O(N^2) but a O(NlgN) algorithm instead?
@@ -360,7 +316,11 @@ Could Java implement a similar optimization to the JVM so that people who overlo
 Are ropes good enough? At 2^24 to 2^27 we're measuring the concatenations in seconds and the growth appears linear until that point even though asymptotically it is not.
 You could argue that's good enough because that's the memory limit of the browser.
 
-Would a StringBuilder implemented in WASM perform significantly better than += and Array.join? Would it be benefitial when you need more than 2^27 concatenations when the extra lgN factor causes issues?
+Would a StringBuilder implemented in WASM perform significantly better than += and Array.join if there was a sufficient amount of concatenations?
+Unfortunately, I was limited to 2^27 concatenations before running out of memory.
+If was able to exceed that memory limit, I expect that WASM, and even my Javascript StringBuilder to eventually perform better due to the O(N) vs. O(NlgN) complexity.
+
+Finally, would we see a performance improvement if we implemented a StringBuilder in the javascript virtual machine instead of JSRope and rebuilt the browser?
 
 # Java source
 
@@ -472,6 +432,86 @@ function runExperiment() {
         var concatDuration = runConcatExperiment(size);
         var arrayJoinDuration = runArrayJoinExperiment(size);
         addRow(base, power, size, concatDuration, arrayJoinDuration);
+    }
+}
+```
+
+# Javascript String Builder
+```javascript
+function StringBuilder() {
+
+    // cannot use String.fromCharCode due to
+    // Uncaught RangeError: Maximum call stack size exceeded
+    // so we are stuck with TextEncoder and TextDecoder
+    // https://developer.mozilla.org/en-US/docs/Web/API/TextDecoder
+    // https://developer.mozilla.org/en-US/docs/Web/API/TextEncoder
+    let utf8Decoder = new TextDecoder();
+    let utf8Encoder = new TextEncoder();
+
+    this.bufferConsumed = 0;
+    this.capacity = 128;
+    this.buffer = new Uint8Array(128);
+
+    this.append = function (strToAdd) {
+        // O(N) copy but ammortized to O(1) over all concats
+        var encodedStr = utf8Encoder.encode(strToAdd);
+        while (encodedStr.length + this.bufferConsumed > this.capacity) {
+            var tmpBuffer = this.buffer;
+            this.buffer = new Uint8Array(this.capacity*2);
+            this.capacity = this.capacity*2;
+            for(var i = 0; i < this.bufferConsumed; i++) {
+                this.buffer[i] = tmpBuffer[i];
+            }
+        }
+
+        // add the characters to the end
+        for(var i = 0; i < encodedStr.length; i++) {
+            this.buffer[i+this.bufferConsumed] = encodedStr[i];
+        }
+        this.bufferConsumed += encodedStr.length;
+
+        return this;
+    }
+
+    this.build = function() {
+        return utf8Decoder.decode(this.buffer.slice(0, this.bufferConsumed));
+    }
+}
+```
+
+# Rust WASM String
+```
+mod utils;
+
+use wasm_bindgen::prelude::*;
+
+// When the `wee_alloc` feature is enabled, use `wee_alloc` as the global
+// allocator.
+#[cfg(feature = "wee_alloc")]
+#[global_allocator]
+static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
+
+#[wasm_bindgen]
+pub struct RustStringBuilder {
+    // String push_str uses a vector internally
+    // vector amortizes push to O(1) over many appends
+    internal: String,
+}
+
+#[wasm_bindgen]
+impl RustStringBuilder {
+
+    #[wasm_bindgen(constructor)]
+    pub fn new() -> RustStringBuilder {
+        RustStringBuilder { internal: String::from("") }
+    }
+
+    pub fn append(&mut self, to_append: String) {
+        self.internal.push_str(to_append.as_str())
+    }
+
+    pub fn build(&self) -> String  {
+        String::from(self.internal.as_str())
     }
 }
 ```
