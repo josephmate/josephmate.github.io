@@ -45,8 +45,10 @@ I looked at using naive += String concatenation, Java's StringBuilder, and Javas
 |                                   | # Concats |       |        |         |         |          |          |          |          |          |
 | Algorithm                         | 2^18      |  2^19 | 2^20   | 2^21    | 2^22    | 2^23     | 2^24     | 2^25     | 2^26     | 2^27     |
 |-----------------------------------|----------:|------:|-------:|--------:|--------:|---------:|---------:|---------:|---------:|---------:|
-| Java naive += (ms)                | 21945     | 94077 | 412675 | 1886317 | 8529431 | TOO LONG | TOO LONG | TOO LONG | TOO LONG | TOO LONG |
-| Java StringBuilder (ms)           | 5         |     6 |     11 |      39 |      70 |      119 |      209 |      492 |      898 |     1738 |
+| Java8 naive += (ms)               | 21945     | 94077 | 412675 | 1886317 | 8529431 | TOO LONG | TOO LONG | TOO LONG | TOO LONG | TOO LONG |
+| Java8 StringBuilder (ms)          | 5         |     6 |     11 |      39 |      70 |      119 |      209 |      492 |      898 |     1738 |
+| Java14 naive += (ms)              |     9726  | 38619 | 173218 | 860218  | 4435485 | TOO LONG | TOO LONG | TOO LONG | TOO LONG | TOO LONG |
+| Java14 StringBuilder (ms)         |         2 |     5 |     12 |      20 |      41 |      115 |      185 |      379 |      943 |     1754 |
 | Chrome Javascript naive += (ms)   | 30        |    79 |    144 |     408 |     906 |     1650 |     3418 |     7411 |    14548 |      OOM |
 | Chrome Javascript Array.join (ms) | 18        |    37 |     71 |     156 |     318 |      621 |     1416 |     3275 |     5385 |      OOM |
 | Chrome Javascript Array.join (ms) | 14        |    12 |     42 |      68 |     172 |      272 |      518 |     1836 |     5075 |     9850 |
@@ -54,13 +56,21 @@ I looked at using naive += String concatenation, Java's StringBuilder, and Javas
 | Chrome Javascript Array.join (ms) | 29        |   112 |    206 |     460 |     813 |     2233 |     3599 |     6384 |    13266 |    33434 |
 | Chrome Javascript Array.join (ms) | 22        |    54 |     93 |     245 |     425 |      753 |     1920 |     4048 |    20333 |      OOM |
 
-At 2^23, the naive Java String concatenation took long to run.
+At 2^23, the naive Java String concatenation took too long to run.
 I gave up at 2^22 when it took over 2 hours!
 Each doubling of the input size results in more than double the runtime, as we expected because of the O(N^2) complexity.
-However, with Javascript it's hard to tell.
-The growth looks kind of linear but maybe log linear.
+I tested both Java8 and and Java14, expecting it to be optimized.
+Even though these articles
+((1)[https://stackoverflow.com/questions/1532461/stringbuilder-vs-string-concatenation-in-tostring-in-java/1532499#1532499],
+(2)[https://stackoverflow.com/questions/14927630/java-string-concat-vs-stringbuilder-optimised-so-what-should-i-do])
+say its been optimized, the optimization cannot fix the concatenation in the loop.
+However (JEP 280: Indify String Concatenation)[http://openjdk.java.net/jeps/280] has laid the groundwork to more easily optimize String concatenation without having to change the bytecode.
+Only 
+
+With Javascript the growth looks kind of linear.
 Lets investigate with a plot.
 We won't plot the naive Java concatenation since it grows too quickly and the scale would make it difficult to analyze the growth of the remaining methods.
+I also left out Java 14 StringBuilder since it performed almost the same as Java 8.
 
 <script src="https://d3js.org/d3.v4.js"></script>
 <!-- Color Scale -->
