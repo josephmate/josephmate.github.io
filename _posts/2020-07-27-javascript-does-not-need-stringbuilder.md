@@ -65,7 +65,6 @@ Even though these articles
 (2)[https://stackoverflow.com/questions/14927630/java-string-concat-vs-stringbuilder-optimised-so-what-should-i-do])
 say its been optimized, the optimization cannot fix the concatenation in the loop.
 However (JEP 280: Indify String Concatenation)[http://openjdk.java.net/jeps/280] has laid the groundwork to more easily optimize String concatenation without having to change the bytecode.
-Only 
 
 With Javascript the growth looks kind of linear.
 Lets investigate with a plot.
