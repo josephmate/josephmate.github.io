@@ -53,10 +53,10 @@ I looked at using naive += String concatenation, Java's StringBuilder, and Javas
 | Java14 StringBuilder (ms)         |         2 |     5 |     12 |      20 |      41 |      115 |      185 |      379 |      943 |     1754 |
 | Chrome Javascript naive += (ms)   | 30        |    79 |    144 |     408 |     906 |     1650 |     3418 |     7411 |    14548 |      OOM |
 | Chrome Javascript Array.join (ms) | 18        |    37 |     71 |     156 |     318 |      621 |     1416 |     3275 |     5385 |      OOM |
-| Chrome Javascript Array.join (ms) | 14        |    12 |     42 |      68 |     172 |      272 |      518 |     1836 |     5075 |     9850 |
-| Chrome Javascript Array.join (ms) | 11        |    18 |     44 |      70 |     149 |      384 |      766 |     1846 |     3655 |    10912 |
-| Chrome Javascript Array.join (ms) | 29        |   112 |    206 |     460 |     813 |     2233 |     3599 |     6384 |    13266 |    33434 |
-| Chrome Javascript Array.join (ms) | 22        |    54 |     93 |     245 |     425 |      753 |     1920 |     4048 |    20333 |      OOM |
+| Firefox Javascript naive += (ms)  | 14        |    12 |     42 |      68 |     172 |      272 |      518 |     1836 |     5075 |     9850 |
+| Firefox Javascript Array.join (ms)| 11        |    18 |     44 |      70 |     149 |      384 |      766 |     1846 |     3655 |    10912 |
+| NodeJS Javascript naive += (ms)   | 29        |   112 |    206 |     460 |     813 |     2233 |     3599 |     6384 |    13266 |    33434 |
+| NodeJS Javascript Array.join (ms) | 22        |    54 |     93 |     245 |     425 |      753 |     1920 |     4048 |    20333 |      OOM |
 
 At 2^23, the naive Java String concatenation took too long to run.
 I gave up at 2^22 when it took over 2 hours!
