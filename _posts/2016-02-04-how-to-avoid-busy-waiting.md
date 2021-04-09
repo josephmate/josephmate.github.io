@@ -6,6 +6,11 @@ author: matejoseph
 comments: true
 categories: [C++, Computer Science, concurrency, Java, java, Job Hunt, Programming]
 ---
+Update 2021-04-08: Viliam, a reader on my wordpress spotted an error.
+Thank you again!
+I called notify() and wait() on the implicit `this` rather than the lock!
+This adds to my argument that the best way to wait for something is to use a Future. There's so many ways to get it wrong.
+
 <a href="http://www.amazon.com/Programming-Interviews-Exposed-Secrets-Landing/dp/1118261364/ref=sr_1_1?ie=UTF8&qid=1454104897&sr=8-1&keywords=programming+interviews+exposed">Programming Interviews Exposed</a> asks us to describe busy waiting and how to avoid it. The book provides a decent solution, but not the best solution. I'll first introduce the problem and then build upon the solution until we have our best solution.
 <h2>Busy Waiting</h2>
 You have busy waiting When one thread, waits for a result from another thread and you use and NOOP/empty loop to wait for that result. We will explore waiting for a result from two sub tasks to demonstrate and solve this problem.
@@ -93,7 +98,7 @@ This method uses the least possible cycles, but it is error prone. If not coded 
             // ...
             synchronized(lock) {
                 doneCount++;
-                notify();
+                lock.notify();
             }
         }
     });
@@ -104,7 +109,7 @@ This method uses the least possible cycles, but it is error prone. If not coded 
             // ...
             synchronized(lock) {
                 doneCount++;
-                notify();
+                lock.notify();
             }
         }
     });
@@ -115,7 +120,7 @@ This method uses the least possible cycles, but it is error prone. If not coded 
         thread2.start();
 
         while(doneCount < 2) {
-            wait();
+            lock.wait();
         }
     }
 ```
@@ -133,6 +138,7 @@ might never wake up because it didn't get one of the notifications.</li>
 	<li>Placing the entire sub task in the synchronized block instead of just the
 shared data accesses would of only let one sub task run at a time resulting in
 no parallelism.</li>
+  <li>In a previous version of the above pseudocode I wrote notify() and wait() instead of lock.notify() and lock.wait()! If you use a shared Object lock monitor, you have to remember to call notify() and wait() on that lock instead of this.</li>
 </ol>
 As a result, I do not recommend the solution presented in Programming Interviews Exposed.
 <h2>Good Solution: Futures and Other Concurrency Libraries</h2>
