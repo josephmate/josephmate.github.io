@@ -57,3 +57,11 @@ As a result, you need to switch to landscape mode by going to 'Zoom &amp; Contra
 </a>
 
 Viola! No more wasted space. Now you have no excuse not to read those technical books you've been putting off the last couple of months!
+
+<script src="https://utteranc.es/client.js"
+        repo="josephmate/josephmate.github.io"
+        issue-number="15"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script>

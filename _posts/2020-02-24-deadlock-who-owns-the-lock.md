@@ -275,3 +275,12 @@ Even worse, the deadlock wasn't detected!
 
 # Sample Code
 If you want to try it out, check the sample code I saved to [my JavaDeadlock github repository](https://github.com/josephmate/JavaDeadlocks).
+
+
+<script src="https://utteranc.es/client.js"
+        repo="josephmate/josephmate.github.io"
+        issue-number="8"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script>

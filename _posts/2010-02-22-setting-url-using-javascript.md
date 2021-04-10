@@ -51,3 +51,10 @@ Notice that I stuck it right after the :complete => "ap_thinking_stop(); Additio
 Cheers,
 Joseph
 
+<script src="https://utteranc.es/client.js"
+        repo="josephmate/josephmate.github.io"
+        issue-number="29"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script>

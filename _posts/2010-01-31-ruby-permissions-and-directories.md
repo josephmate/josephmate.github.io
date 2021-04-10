@@ -68,3 +68,11 @@ It might have something to do with not being able to cd into a directory that do
 Cheers,
 
 Joseph
+
+<script src="https://utteranc.es/client.js"
+        repo="josephmate/josephmate.github.io"
+        issue-number="34"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script>

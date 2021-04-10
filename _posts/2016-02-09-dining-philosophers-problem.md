@@ -108,3 +108,12 @@ count   philosopher_id
     127 3
      88 4</pre>
 From these results, we see that in all scenarios, no philosopher starved. Secondly, we see a more even distribution of eating compared to the previous barging solution. Unfortunately we are unable to eliminate all the unfairness as the resource ordering we used to solve the problem gives higher priority to the second highest philosopher resulting in an inherent unfairness. From this example we can see that if you have a scenario where you need to prevent starvation, make sure to use fair locks instead of monitors.
+
+
+<script src="https://utteranc.es/client.js"
+        repo="josephmate/josephmate.github.io"
+        issue-number="11"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script>

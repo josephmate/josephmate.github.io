@@ -109,3 +109,11 @@ This fixes the problem.
 ```
 
 After posting this I did some additional research and discovered that this seems to be a common problem that developers encounter. For example, <a href="http://robertnyman.com/2008/10/09/explaining-javascript-scope-and-closures/">this</a> post extremely valuable in understanding what is going on. The author also provides a similar solution. Check it out!
+
+<script src="https://utteranc.es/client.js"
+        repo="josephmate/josephmate.github.io"
+        issue-number="23"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script>

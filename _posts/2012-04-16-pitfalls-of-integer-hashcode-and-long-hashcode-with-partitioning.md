@@ -183,3 +183,11 @@ size of bucket 7: 12272
 If your performance depends on the size of your partitions, you should take special care when using Integer.hashCode() or Long.hashCode(). By carefully selecting the number of partitions, you can avoid the problem. If you uncertain about the distribution of numbers you have or you cannot change the number of partitions, you should use a hash function that does a better job of jumbling up the numbers.
 
 Now I realize this example was really contrived because the numbers being partitioned were even. I chose it because it's really simple to understand and illustrate that  if you don't use a good hash function or have the correct number of partitions, this problem is going bite you when your numbers have a special distribution. The last time I saw this problem in the real world is when the numbers we were partitioning on usually had a particular end like XXXXX7831. If you have encountered this problem, post a comment! I am interesting in hearing about it.
+
+<script src="https://utteranc.es/client.js"
+        repo="josephmate/josephmate.github.io"
+        issue-number="21"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script>

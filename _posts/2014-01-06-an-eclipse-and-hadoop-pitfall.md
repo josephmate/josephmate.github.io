@@ -99,3 +99,11 @@ Unfortunately, this was not enough. Some of the variables passed between the map
 When you're using Eclipse, understand what it is hiding. In this case, Eclipse was hiding that it uses java -classpath to run the main class from Maven. Secondly, it was also hidden that running the main class using java instead of hadoop uses the LocalJobRunner by default. By doing so, everything runs in a single JVM and you will fail to observe where you're exploiting that false assumption.
 
 Additionally, understand the framework you're using is valuable is valuable in avoiding similar pitfalls. In this case, there was a failure in understanding the MapReduce paradigm. The JobClient cannot shared variables with Mapper and Reducer because they run on separate JVMs. This is not an argument against Eclipse. This merely a warning. I use Eclipse for all of my Java development. However, I have compiled and run java programs from the command line. This pattern extends to any tool you're using. For example, what are Ant and Maven hiding from you to make your life easier?
+
+<script src="https://utteranc.es/client.js"
+        repo="josephmate/josephmate.github.io"
+        issue-number="17"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script>

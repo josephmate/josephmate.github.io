@@ -41,3 +41,11 @@ Secondly, by implementing and testing the solution, you discover edge cases you 
 Finally, during interviews you will be asked to code up the solution. You do not want to waste your precious time recalling C++ or Java libraries. You want to be able to focus as much of your energy on tackling the problem, instead of tackling the language.
 
 Wish me luck!
+
+<script src="https://utteranc.es/client.js"
+        repo="josephmate/josephmate.github.io"
+        issue-number="14"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script>

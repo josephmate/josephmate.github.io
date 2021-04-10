@@ -25,3 +25,11 @@ The Huffington Post has already performed this experiment documented in the arti
 <a title="Is Mexican Coke the real thing? by Louise Chu" href="http://www.signonsandiego.com/uniontrib/20041109/news_1b9mexcoke.html">Is Mexican Coke the real thing? By Louise Chu</a>
 
 <a href="http://seattletimes.nwsource.com/html/nationworld/2002076071_coke29.html">Mexican Coke a hit in U.S. By Kevin Pang</a>
+
+<script src="https://utteranc.es/client.js"
+        repo="josephmate/josephmate.github.io"
+        issue-number="22"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script>

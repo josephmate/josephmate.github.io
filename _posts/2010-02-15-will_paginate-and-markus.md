@@ -22,3 +22,11 @@ Student.all.each do |student|
     student.create_group_for_working_alone_student(a.id)
 end
 ```
+
+<script src="https://utteranc.es/client.js"
+        repo="josephmate/josephmate.github.io"
+        issue-number="31"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script>
