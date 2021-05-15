@@ -4,6 +4,7 @@ title: Projects
 permalink: /projects/
 ---
 - [PowersOf2](https://josephmate.github.io/PowersOf2/): estimate runtime complexity to solve input size within a given time.
+- [Document View Chrome Plugin](https://chrome.google.com/webstore/detail/document-view-chrome-plug/lhjjaoaopjdgeknlacabhnbehdeeklla): Plugin that gets rid of nav bars, so you can focus on the document. Currently only supports Confluence wikis. Great for presenting your wiki over conference calls.
 - [LongLineLasso](https://github.com/josephmate/LongLineLasso): Edits large files that have long lines. You can output text near matches or replace matches. Tried to get it to perform as well as grep, ripgrep, sed, and tr [but failed](https://raw.githubusercontent.com/josephmate/LongLineLasso/main/performance_testing/flame_graph_match_v7.svg). My program is 10x slower than existing tools even though the file was one line.
 - [GoogleKickStartStats](https://josephmate.github.io/GoogleKickStartStats/): Exposes GoogleKickStart problems as a sortable tables. Also has a checklist to (stored client side) to mark which problems you've completed.
 - [JavaMemoryGraph](https://github.com/josephmate/JavaMemoryGraph): Loads a Java hprof memory dump, and summarizes it visually as a graph with weighted edges.
