@@ -239,7 +239,7 @@ Was this my fault?
 
 <script src="https://utteranc.es/client.js"
         repo="josephmate/josephmate.github.io"
-        issue-number="37"
+        issue-number="41"
         theme="github-light"
         crossorigin="anonymous"
         async>
