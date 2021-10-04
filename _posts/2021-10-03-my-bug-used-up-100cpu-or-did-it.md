@@ -129,7 +129,7 @@ The details from the JDK bug didn't give me any hints:
 All this tells me is that they planned to make some massive changes to ScheduledThreadPoolExecutor in JDK9.
 Also this tells me that they will probably never fix this in JDK8.
 That's why if you try this right now in the latest JDK8, you will likely reproduce the problem.
-Looks like we'll need to dive in the source code.
+Looks like we'll need to dive into the source code.
 We'll start our investigation at the top of the stack trace from the thread dump earlier: `ScheduledThreadPoolExecutor$DelayedWorkQueue.poll(ScheduledThreadPoolExecutor.java:809)`.
 By running a minimal reproducing example in Intellij and places a break point near `DelayedWorkerQueue.poll` we can find the infinite loop.
 Popping a few stack frames we see `ThreadPoolExecutor.getTask` as the infinte loop:
