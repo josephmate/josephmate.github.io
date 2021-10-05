@@ -103,10 +103,11 @@ The author had the exact same line of code as me:
 
 I intentionally used this because I did not want to continuously consume the resources needed for a thread for something that ran once every 10 minutes!
 They even warn you not to set it to 0 in the documentation:
-> Additionally, it is almost never a good idea to set corePoolSize to zero or use allowCoreThreadTimeOut because this may leave the pool without threads to handle tasks once they become eligible to run. 
+> Additionally, it is almost never a good idea to set corePoolSize to zero or use allowCoreThreadTimeOut because this may leave the pool without threads to handle tasks once they become eligible to run.
+
 But I was okay with that, because I did not care about waiting for the pool to create a new thread.
 The 10 minute delay was not super strict.
->     corePoolSize - the number of threads to keep in the pool, even if they are idle, unless allowCoreThreadTimeOut is set
+> corePoolSize - the number of threads to keep in the pool, even if they are idle, unless allowCoreThreadTimeOut is set
 So I was expecting the pool to only keep threads around temporarily.
 
 At this point, I switched to `corePoolSize=1` to work around this unexpected behavior.
