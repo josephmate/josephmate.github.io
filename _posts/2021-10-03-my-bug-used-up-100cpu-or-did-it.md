@@ -85,7 +85,7 @@ executorService.scheduleWithFixedDelay(
 This was something that runs only every 10 minutes and on top of that it was not CPU bound.
 There were other similar blocks of code scheduling this kind of work on application startup; again, all of them were IO bound.
 On top of that, I intentionally chose `scheduleWithFixedDelay` in case it unexpectedly took longer than 10 minutes so that it would not overload the thread pool by adding more work when the previous instance of that task has not completed yet.
-At this point I was out of ideas, so I asked a co-worker to double check my work.
+At this point I was out of ideas, so I asked a coworker to double check my work.
 
 My co-worker took a look and agreed with me.
 It doesn't look like an issue with `doSomethingReallyCheap()`.
@@ -194,7 +194,7 @@ For example, what thread is going to do the work of creating the thread when the
 # What could I have done better?
 It's impossible for me to have known that `corePoolSize=0` would not work.
 I could have read the JavaDocs more closely and heeded their warning of avoiding `corePoolSize=0`.
-However, even if I had read that line, I don't think it would have stopped me because in my mind the usecase made sense.
+However, even if I had read that line, I don't think it would have stopped me because in my mind the use case made sense.
 
 What's embarrassing is that the problem is reproducible every time and 100% CPU should be pretty easy to spot.
 I should have monitored the CPU while testing it.
@@ -206,7 +206,7 @@ Or should there be an automated test that detects significant differences in CPU
 # Try it yourself
 
 If you want to try this yourself, compile and run the below code using JDK8.
-It reproduced at the time i wrote this article because OpenJDK starting from JDK9.
+It reproduced at the time I wrote this article because OpenJDK only fixed the issue in JDK9.
 ```
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -230,7 +230,7 @@ public final class Main {
 }
 ```
 
-Trying out the above code with JDK9 does not reproduce the 100% CPU util:
+Just to double check, I tried out the above code with JDK9 and CPU util was low.
 ```
 $ top
   PID USER      PR  NI    VIRT    RES  %CPU  %MEM     TIME+ S COMMAND
