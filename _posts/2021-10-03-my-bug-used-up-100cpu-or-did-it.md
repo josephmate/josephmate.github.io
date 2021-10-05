@@ -7,6 +7,13 @@ comments: true
 categories: [Java, ExecutorService]
 ---
 
+Update: thanks to:
+
+* [Omar Elrefaei](https://github.com/Omar-Elrefaei) for the [PR](https://github.com/josephmate/josephmate.github.io/pull/42) that fixed the
+  formatting of this document.
+* [/u/thorn-harvestar/](https://www.reddit.com/r/programming/comments/q1w4od/comment/hfhw9a5/?utm_source=share&utm_medium=web2x&context=3), [/u/philipTheDev/](https://www.reddit.com/r/programming/comments/q1w4od/comment/hfhabww/), and [/u/vips7L/](https://www.reddit.com/r/java/comments/q1wlyw/comment/hfhq8pg/): for identify another root cause. I shouldn't be using JDK8 anymore!
+* [/u/SirSagramore/](https://www.reddit.com/r/programming/comments/q1w4od/comment/hfi5vx3/) and [/u/wot-teh-phuck](https://www.reddit.com/r/programming/comments/q1w4od/comment/hfi9478/): for proving that it really was my fault :(. Premature optimization is the root of all evil.
+
 # The Sirens are blaring
 
 A couple years ago I received a bug report claiming that I caused 100% CPU util on a VM when it should have been idle.
@@ -193,16 +200,27 @@ However, there's a lot of stuff left to figure out.
 For example, what thread is going to do the work of creating the thread when the scheduled task needs to run?
 
 # What could I have done better?
-It's impossible for me to have known that `corePoolSize=0` would not work.
+
+**RTFM:** It's impossible for me to have known that `corePoolSize=0` would not work.
 I could have read the JavaDocs more closely and heeded their warning of avoiding `corePoolSize=0`.
 However, even if I had read that line, I don't think it would have stopped me because in my mind the use case made sense.
 
-What's embarrassing is that the problem is reproducible every time and 100% CPU should be pretty easy to spot.
+**Testing:** What's embarrassing is that the problem is reproducible every time and 100% CPU should be pretty easy to spot.
 I should have monitored the CPU while testing it.
 But I only look at the CPU when testing my code for a performance change.
 I did not anticipate this change to have a performance impact.
 Should I check the CPU for all of my changes?
 Or should there be an automated test that detects significant differences in CPU utilization between code changes?
+
+**Upgrade:** If I kept the JDK updated, I would have never encountered this problem.
+The problem occurred back in 2018 or 2019, which was around the time JDK 11 was released which would have included the fix.
+
+**Unoptimized:** I never should have tried to optimize the thread pool!
+Two commenters summed it up nicely, calling me out on my sin.
+
+> You're guilty of one of the biggest crimes that you can commit in all of Computer Science - preemptive optimization. Consuming a single thread in perpetuity uses almost no meaningful resources. Any attempt to optimize this was pointless at best, and dangerous at worst - as you found out. -[/u/SirSagramore/](https://www.reddit.com/r/programming/comments/q1w4od/comment/hfi5vx3/)
+
+> I've found that it's rarely a good idea to optimise prematurely without facts/numbers to back it up. It's just one OS thread and the OS is probably smarter than the developer when it comes to managing resources in the long run. -[/u/wot-teh-phuck](https://www.reddit.com/r/programming/comments/q1w4od/comment/hfi9478/)
 
 # Try it yourself
 
@@ -247,6 +265,8 @@ However, I still share some of blame because I could have caught this issue earl
 Fortunately, I'm grateful we had strong test engineers that caught it before it was released.
 What do you think?
 Was this my fault?
+
+Update: Yes it was my fault. Premature optimization is the root of all evil.
 
 <script src="https://utteranc.es/client.js"
         repo="josephmate/josephmate.github.io"
