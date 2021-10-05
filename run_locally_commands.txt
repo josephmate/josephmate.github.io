@@ -2,7 +2,8 @@
 Installation:
 https://jekyllrb.com/docs/
 
-gem install jekyll bundler
+#gem install jekyll bundler
+gem install --no-document jekyll bundler
 
 Run locally:
 bundle exec jekyll serve
