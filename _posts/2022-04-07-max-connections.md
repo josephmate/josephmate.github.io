@@ -1,21 +1,31 @@
 ---
 layout: post
-title: "1,000,000 Concurrent Connections in Java"
-date: 2022-03-31 11:59
+title: "1,000,000 Concurrent Connections"
+date: 2022-04-07 11:59
 author: joseph
 comments: true
 categories: [Java, Server, Connections]
 ---
 
-I ran across the Pheonix framework which (achieved 2,000,000 concurrent websocket connections)[https://www.phoenixframework.org/blog/the-road-to-2-million-websocket-connections].
+I hear this misconception all the time: (a server can only receive 65,536 connections)[https://www.quora.com/Is-it-possible-to-handle-1-billion-connections-simultaneously-in-Java-with-a-single-server]. As an example Cameron Purdy says, "A TCP/IP address only supports 65,000 connections, so you would have to have to assign around 30,000 IP addresses to that server."
 
-That got me thinking about two problems:
-1. What's the theoretical max num of connections a server and client can concurrently keep open on a port?
-2. What can I pratically achieve on my laptop with Java?
+So I put together this article arguing from three directions:
+
+1. WhatsApp and Pheonix have already demonstrated this.
+2. What's theorically possible based on the TCP/IP protocol
+3. A simple Java experiment anyone can run on their machine if there are still
+   not convinced.
+
+
+# Experiments
+
+The Pheonix framework which (achieved 2,000,000 concurrent websocket connections)[https://www.phoenixframework.org/blog/the-road-to-2-million-websocket-connections]
+(WhatsApp also achieved 2,000,000)[https://blog.whatsapp.com/1-million-is-so-2011].
+Both used
 
 Jump to the summary at the end if you want to skip the details.
 
-# Theoretical
+# Theoretical Max
 
 To understand the theortical max,
 you need to understand a little bit of background of TCP over IP.
@@ -98,6 +108,9 @@ mouse movements would take a few seconds to register on my screen. Anything
 beyond that and my Linux would freeze and become unreponsive.
 
 # Summary
+
+1. Pheonix Framework achieved 2,000,000 connections
+1. WhatsApp achieved 2,000,000 connections
 1. theortical limit is ~1 quadrillion (1,000,000,000,000,000)
 2. you will run out of source ports (only 2^16)
 3. you can fix this by creating 
