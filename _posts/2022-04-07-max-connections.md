@@ -18,27 +18,27 @@ So I put together this article arguing from three directions:
 3. A simple Java experiment anyone can run on their machine if there are still
    not convinced.
 
+Jump to the summary at the end if you want to skip the details.
 
 # Experiments
 
 The Pheonix framework which (achieved 2,000,000 concurrent websocket connections)[https://www.phoenixframework.org/blog/the-road-to-2-million-websocket-connections]
 (WhatsApp also achieved 2,000,000)[https://blog.whatsapp.com/1-million-is-so-2011].
-Both used
-
-Jump to the summary at the end if you want to skip the details.
+Interestingly, both are built on Erlang.
 
 # Theoretical Max
 
-Most think it's 2^16=65536 because that's all the port available.
+Some think it's 2^16=65,536 because that's all the port available.
 That's true for a client making a connection to an IP, port pair.
 For instance, my laptop will only be able to make 65000 connections to Google (probably a lot less due to NAT).
 
 However, for a server listening on a port, connections will be coming from multiple IP addresses.
-So a server listening to one point, on one IP address in the best case be able
-to listen to all IP address, coming from all ports on the IP addresses.
+So a server listening to one port,
+on one IP address in the best case will be able to listen to all IP address,
+coming from all ports on the IP addresses.
 
 To understand the theortical max,
-you need to understand a little bit of background of TCP over IP.
+you need to understand a little bit of TCP over IP.
 
 Each packet has:
 1. 32bit source IP (the IP address the packet is coming from)
@@ -103,9 +103,135 @@ AMD FX(tm)-6300 Six-Core Processor
 
 ## File Descriptors
 
+First battle you'll encounter is with the operating system.
+The defaults prevent so many file descriptors.
+You'll see an error like:
+```
+Exception in thread "main" java.lang.ExceptionInInitializerError
+  at java.base/sun.nio.ch.SocketDispatcher.close(SocketDispatcher.java:70)
+  at java.base/sun.nio.ch.NioSocketImpl.lambda$closerFor$0(NioSocketImpl.java:1203)
+  at java.base/jdk.internal.ref.CleanerImpl$PhantomCleanableRef.performCleanup(CleanerImpl.java:178)
+  at java.base/jdk.internal.ref.PhantomCleanable.clean(PhantomCleanable.java:133)
+  at java.base/sun.nio.ch.NioSocketImpl.tryClose(NioSocketImpl.java:854)
+  at java.base/sun.nio.ch.NioSocketImpl.close(NioSocketImpl.java:906)
+  at java.base/java.net.SocksSocketImpl.close(SocksSocketImpl.java:562)
+  at java.base/java.net.Socket.close(Socket.java:1585)
+  at Main.main(Main.java:123)
+Caused by: java.io.IOException: Too many open files
+  at java.base/sun.nio.ch.FileDispatcherImpl.init(Native Method)
+  at java.base/sun.nio.ch.FileDispatcherImpl.<clinit>(FileDispatcherImpl.java:38)
+  ... 9 more
+```
+
+
+Each server socket needs two file descriptors:
+
+1. A buffer for send
+2. A buffer for receiving
+
+The same goes for client connections.
+As a result, running this experiment on a single machine whill require:
+
+* 1,000,000 connection for the client
+* 1,000,000 connection for the server
+* 2 file descriptors per connection
+* = 4,000,000 file descriptors
+
+For a bigSur 11.4 Mac, you can increase the file descriptor limit with:
+```
+sudo sysctl kern.maxfiles=2000000 kern.maxfilesperproc=2000000
+kern.maxfiles: 49152 -> 2000000
+kern.maxfilesperproc: 24576 -> 2000000
+sysctl -a | grep maxfiles
+kern.maxfiles: 2000000
+kern.maxfilesperproc: 1000000
+
+ulimit -Hn 2000000
+ulimit -Sn 2000000
+```
+as recommend by this [stackoverflow answer](https://superuser.com/a/1644788).
+
+For Ubuntu 20.04, I the quickest way is to:
+```
+sudo su
+# 2^25 should be more than enough
+sysctl -w fs.nr_open=33554432
+fs.nr_open = 33554432
+ulimit -Hn 33554432
+ulimit -Sn 33554432
+```
+
+
 ## Java File Descriptor Limits
 
+Now that operating system is complying,
+the JVM doesn't like what you're doing with this experiment either.
+When you run the experiment you still get the same or similar stack trace.
+
+This [stackoverflow answer]( https://superuser.com/a/1398360) identifies a JVM
+flag as the solution:
+
+> [`-XX:-MaxFDLimit` :     Disables the attempt to set the soft limit for the
+> number of open file descriptors to the hard limit. By default, this option is
+> enabled on all platforms, but is ignored on Windows. The only time that you
+> may need to disable this is on Mac OS, where its use imposes a maximum of
+> 10240, which is lower than the actual system maximum.](https://docs.oracle.com/en/java/javase/16/docs/specs/man/java.html)
+
+```
+java -XX:-MaxFDLimit -cp out/production/max_connections Main 6000
+```
+This only seems to be required for the Mac.
+I was able to get the experiment to run without the flag on Ubuntu.
+
 ## Source Ports
+
+It still won't work.
+You encounter a stacktrace like:
+```
+Exception in thread "main" java.net.BindException: Can't assign requested
+address
+        at java.base/sun.nio.ch.Net.bind0(Native Method)
+        at java.base/sun.nio.ch.Net.bind(Net.java:555)
+        at java.base/sun.nio.ch.Net.bind(Net.java:544)
+        at java.base/sun.nio.ch.NioSocketImpl.bind(NioSocketImpl.java:643)
+        at
+java.base/java.net.DelegatingSocketImpl.bind(DelegatingSocketImpl.java:94)
+        at java.base/java.net.Socket.bind(Socket.java:682)
+        at java.base/java.net.Socket.<init>(Socket.java:506)
+        at java.base/java.net.Socket.<init>(Socket.java:403)
+        at Main.main(Main.java:137)
+```
+
+The final battle is the TCP/IP specification.
+You laptop is limited to about 65,000 client ports.
+Our experiment well exceeds this limit.
+As a result, we work around this by conservatively assigning an IP address for every 5,000 client connections.
+
+On bigSur 11.4 you can add with:
+```
+for i in `seq 0 200`; do sudo ifconfig lo0 alias 10.0.0.$i/8 up  ; done 
+```
+
+To test:
+```
+for i in `seq 0 200`; do ping -c 1 10.0.0.$i  ; done 
+```
+
+To remove:
+```
+for i in `seq 0 200`; do sudo ifconfig lo0 alias 10.0.0.$i  ; done 
+```
+
+On Ubuntu 20.04 you can:
+```
+for i in `seq 0 200`; do sudo ip addr add 10.0.0.$i/8 dev lo; done 
+```
+
+To remove:
+```
+for i in `seq 0 200`; do sudo ip addr del 10.0.0.$i/8 dev lo; done 
+```
+
 
 ## Results
 
