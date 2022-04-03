@@ -7,7 +7,9 @@ comments: true
 categories: [Java, Server, Connections]
 ---
 
-I hear this misconception all the time: (a server can only receive 65,536 connections)[https://www.quora.com/Is-it-possible-to-handle-1-billion-connections-simultaneously-in-Java-with-a-single-server]. As an example Cameron Purdy says, "A TCP/IP address only supports 65,000 connections, so you would have to have to assign around 30,000 IP addresses to that server."
+I hear this misconception all the time:
+
+> (A TCP/IP address only supports 65,000 connections, so you would have to have to assign around 30,000 IP addresses to that server.)[https://www.quora.com/Is-it-possible-to-handle-1-billion-connections-simultaneously-in-Java-with-a-single-server]
 
 So I put together this article arguing from three directions:
 
@@ -26,6 +28,14 @@ Both used
 Jump to the summary at the end if you want to skip the details.
 
 # Theoretical Max
+
+Most think it's 2^16=65536 because that's all the port available.
+That's true for a client making a connection to an IP, port pair.
+For instance, my laptop will only be able to make 65000 connections to Google (probably a lot less due to NAT).
+
+However, for a server listening on a port, connections will be coming from multiple IP addresses.
+So a server listening to one point, on one IP address in the best case be able
+to listen to all IP address, coming from all ports on the IP addresses.
 
 To understand the theortical max,
 you need to understand a little bit of background of TCP over IP.
@@ -99,25 +109,29 @@ AMD FX(tm)-6300 Six-Core Processor
 
 ## Results
 
-On my Mac, I was able to reach 80,000. However, mysterously a few minutes after
-running the experiment, the Mac crashes without any diagnostics so I'm not able
-to diagnose what happened.
+On my Mac, I was able to reach 80,000.
+However, mysterously a few minutes after running the experiment,
+the Mac crashes without any diagnostics so I'm not able to diagnose what happened.
 
-On my Linux, I was able to reach 640,000. However, while the experiment ran, my
-mouse movements would take a few seconds to register on my screen. Anything
-beyond that and my Linux would freeze and become unreponsive.
+On my Linux, I was able to reach 800,000.
+However, while the experiment ran,
+my mouse movements would take a few seconds to register on my screen.
+Anything beyond that and my Linux would freeze and become unreponsive.
+
+I used sysstat
+https://raw.githubusercontent.com/josephmate/java-by-experiments/main/max_connections/data/out.800000.svg
 
 # Summary
 
 1. Pheonix Framework achieved 2,000,000 connections
-1. WhatsApp achieved 2,000,000 connections
-1. theortical limit is ~1 quadrillion (1,000,000,000,000,000)
-2. you will run out of source ports (only 2^16)
-3. you can fix this by creating 
-4. you will run out of file descriptors
-5. you can fix this by overriding the file descriptor limits of your OS
-6. Java will also limit the file descriptors
-7. You can override this by adding the `-XX:MaxFDLimit` JVM argument
-8. practical limit on my 16GB mac is 80,000 
-9. practical limit on my 8GB Linux is 640,000
+2. WhatsApp achieved 2,000,000 connections
+3. Theortical limit is ~1 quadrillion (1,000,000,000,000,000)
+4. You will run out of source ports (only 2^16)
+5. You can fix this by creating 
+6. You will run out of file descriptors
+7. You can fix this by overriding the file descriptor limits of your OS
+8. Java will also limit the file descriptors
+9. You can override this by adding the `-XX:MaxFDLimit` JVM argument
+10. Practical limit on my 16GB Mac is 80,000 
+11. Practical limit on my 8GB Linux is 640,000
 
