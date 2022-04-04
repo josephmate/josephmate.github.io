@@ -235,17 +235,28 @@ for i in `seq 0 200`; do sudo ip addr del 10.0.0.$i/8 dev lo; done
 
 ## Results
 
-On my Mac, I was able to reach 80,000.
+On Mac, I was able to reach 80,000.
 However, mysterously a few minutes after running the experiment,
 the Mac crashes without any diagnostics so I'm not able to diagnose what happened.
 
-On my Linux, I was able to reach 800,000.
+On Linux, I was able to reach 800,000.
 However, while the experiment ran,
 my mouse movements would take a few seconds to register on my screen.
 Anything beyond that and my Linux would freeze and become unreponsive.
 
-I used sysstat
+I used sysstat to investigate what resource was in contention:
 https://raw.githubusercontent.com/josephmate/java-by-experiments/main/max_connections/data/out.800000.svg
+
+Some interesting facts:
+
+* MBmemfree bottomed out at 117
+* MBavail was still 1500
+* MBmemused was only 1500 (18% of my total 8GB)
+* 1,600,454 sockets
+
+I suspect the buffers were requested, but since only 4 bytes were needed from each, only a fraction of the buffer was used.
+
+TODO: look up javadoc tcp client/server socket buffer size defaults
 
 # Summary
 
