@@ -235,11 +235,24 @@ for i in `seq 0 200`; do sudo ip addr del 10.0.0.$i/8 dev lo; done
 
 ## Results
 
-On Mac, I was able to reach 80,000.
+*On Mac*, I was able to reach 80,000.
 However, mysterously a few minutes after running the experiment,
-the Mac crashes without any diagnostics so I'm not able to diagnose what happened.
+the Mac crashes without any crash reports in `/Library/Logs/DiagnosticReports` so I'm not able to diagnose what happened.
+```
+sysctl net | grep tcp | grep -E '(recv)|(send)'
+net.inet.tcp.sendspace: 131072
+net.inet.tcp.recvspace: 131072
 
-On Linux, I was able to reach 800,000.
+pagesize
+4096
+```
+
+80000*131072*2*2 bytes is about 39GB.
+Could that be why my Mac crashed?
+Was it unable handle that much virtual memory?
+I'm not familiar with debugging on Mac without a crash report so if anyone has any resources let me know.
+
+*On Linux*, I was able to reach 800,000.
 However, while the experiment ran,
 my mouse movements would take a few seconds to register on my screen.
 Anything beyond that and my Linux would freeze and become unreponsive.
@@ -249,14 +262,17 @@ https://raw.githubusercontent.com/josephmate/java-by-experiments/main/max_connec
 
 Some interesting facts:
 
-* MBmemfree bottomed out at 117
-* MBavail was still 1500
-* MBmemused was only 1500 (18% of my total 8GB)
-* 1,600,454 sockets
+* MBmemfree bottomed out at 117MB
+* MBavail was still 1500MB
+* MBmemused was only 1500MB (18% of my total 8GB)
+* 1,600,454 sockets (800k server sockets and 800k client connections plus what ever else was running on my desktop)
 
 I suspect the buffers were requested, but since only 4 bytes were needed from each, only a fraction of the buffer was used.
 
-TODO: look up javadoc tcp client/server socket buffer size defaults
+On linux:
+TODO: https://stackoverflow.com/questions/7865069/how-to-find-the-socket-buffer-size-of-linux
+```
+```
 
 # Summary
 
@@ -270,5 +286,5 @@ TODO: look up javadoc tcp client/server socket buffer size defaults
 8. Java will also limit the file descriptors
 9. You can override this by adding the `-XX:MaxFDLimit` JVM argument
 10. Practical limit on my 16GB Mac is 80,000 
-11. Practical limit on my 8GB Linux is 640,000
+11. Practical limit on my 8GB Linux is 800,000
 
