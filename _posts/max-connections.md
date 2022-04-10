@@ -260,6 +260,12 @@ Anything beyond that and my Linux would freeze and become unreponsive.
 I used sysstat to investigate what resource was in contention:
 https://raw.githubusercontent.com/josephmate/java-by-experiments/main/max_connections/data/out.800000.svg
 
+TODO: clean up these commands:
+```
+sar -o out.$NUM_CONNECTIONS.sar -A 1 3600 2>&1 > /dev/null  &
+sadf -g  out.1.sar -- -w -r -u -n SOCK -n TCP -B -S -W > out.1.svg
+```
+
 Some interesting facts:
 
 * MBmemfree bottomed out at 117MB
@@ -270,8 +276,49 @@ Some interesting facts:
 I suspect the buffers were requested, but since only 4 bytes were needed from each, only a fraction of the buffer was used.
 
 On linux:
-TODO: https://stackoverflow.com/questions/7865069/how-to-find-the-socket-buffer-size-of-linux
+https://stackoverflow.com/questions/7865069/how-to-find-the-socket-buffer-size-of-linux
 ```
+# minimum, default and maximum memory size values (in byte)
+cat /proc/sys/net/ipv4/tcp_rmem
+4096    131072  6291456
+cat /proc/sys/net/ipv4/tcp_wmem
+4096    16384   4194304
+
+sysctl net.ipv4.tcp_rmem
+net.ipv4.tcp_rmem = 4096        131072  6291456
+sysctl net.ipv4.tcp_wmem
+net.ipv4.tcp_wmem = 4096        16384   4194304
+```
+
+Memory page size
+```
+getconf PAGESIZE
+4096
+```
+
+TODO: rerun with 900,000
+
+TODO: flame graphs
+https://github.com/jvm-profiling-tools/async-profiler
+```
+sudo apt install openjdk-8-dbg
+gdb /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64/server/libjvm.so -ex 'info address UseG1GC'
+.
+.
+.
+Symbol "UseG1GC" is at 0xdd9042 in a file compiled without debugging.
+
+sudo sysctl kernel.perf_event_paranoid=1
+kernel.perf_event_paranoid = 1
+sudo sysctl kernel.kptr_restrict=0
+kernel.kptr_restrict = 0
+
+-agentpath:/home/joseph/lib/async-profiler-2.7-linux-x64/build/libasyncProfiler.so=start,collapsed,event=wall,file=collapsed.wall.txt
+
+https://raw.githubusercontent.com/brendangregg/FlameGraph/master/flamegraph.pl
+
+flamegraph.pl collapsed.wall.txt > flamegraph.svg
+
 ```
 
 # Summary
