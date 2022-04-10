@@ -263,7 +263,7 @@ https://raw.githubusercontent.com/josephmate/java-by-experiments/main/max_connec
 TODO: clean up these commands:
 ```
 sar -o out.$NUM_CONNECTIONS.sar -A 1 3600 2>&1 > /dev/null  &
-sadf -g  out.1.sar -- -w -r -u -n SOCK -n TCP -B -S -W > out.1.svg
+sadf -g  out.1.sar -- -w -r -u -n SOCK -n TCP -B -S -W > out.$NUM_CONNECTIONS.svg
 ```
 
 Some interesting facts:
@@ -271,7 +271,7 @@ Some interesting facts:
 * MBmemfree bottomed out at 117MB
 * MBavail was still 1500MB
 * MBmemused was only 1500MB (18% of my total 8GB)
-* 1,600,454 sockets (800k server sockets and 800k client connections plus what ever else was running on my desktop)
+* 1,600,454 sockets (840k server sockets and 840k client connections plus what ever else was running on my desktop)
 
 I suspect the buffers were requested, but since only 4 bytes were needed from each, only a fraction of the buffer was used.
 
@@ -333,5 +333,5 @@ flamegraph.pl collapsed.wall.txt > flamegraph.svg
 8. Java will also limit the file descriptors
 9. You can override this by adding the `-XX:MaxFDLimit` JVM argument
 10. Practical limit on my 16GB Mac is 80,000 
-11. Practical limit on my 8GB Linux is 800,000
+11. Practical limit on my 8GB Linux is 840,000
 
