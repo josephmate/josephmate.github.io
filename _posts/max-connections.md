@@ -13,10 +13,9 @@ I hear this misconception all the time:
 
 So I put together this article arguing from three directions:
 
-1. WhatsApp and Pheonix have already demonstrated this.
+1. WhatsApp and Pheonix have already demonstrated achieving millions of connections on a server.
 2. What's theorically possible based on the TCP/IP protocol
-3. A simple Java experiment anyone can run on their machine if there are still
-   not convinced.
+3. A simple Java experiment anyone can run on their machine if there are still not convinced.
 
 Jump to the summary at the end if you want to skip the details.
 
@@ -258,20 +257,21 @@ my mouse movements would take a few seconds to register on my screen.
 Anything beyond that and my Linux would freeze and become unreponsive.
 
 I used sysstat to investigate what resource was in contention:
-https://raw.githubusercontent.com/josephmate/java-by-experiments/main/max_connections/data/out.800000.svg
+https://raw.githubusercontent.com/josephmate/java-by-experiments/main/max_connections/data/out.840000.svg
 
-TODO: clean up these commands:
 ```
-sar -o out.$NUM_CONNECTIONS.sar -A 1 3600 2>&1 > /dev/null  &
-sadf -g  out.1.sar -- -w -r -u -n SOCK -n TCP -B -S -W > out.$NUM_CONNECTIONS.svg
+sar -o out.840000.sar -A 1 3600 2>&1 > /dev/null  &
+sadf -g  out.840000.sar -- -w -r -u -n SOCK -n TCP -B -S -W > out.840000.svg
 ```
 
+TODO: update these facts with the latest experiment
 Some interesting facts:
 
-* MBmemfree bottomed out at 117MB
-* MBavail was still 1500MB
-* MBmemused was only 1500MB (18% of my total 8GB)
-* 1,600,454 sockets (840k server sockets and 840k client connections plus what ever else was running on my desktop)
+* MBmemfree bottomed out at 96MB
+* MBavail was still 1587MB
+* MBmemused was only 1602MB (19.6% of my total 8GB)
+* MBswpused peeked at 1086MB (despite memory still available)
+* 1,680,483 sockets (840k server sockets and 840k client connections plus what ever else was running on my desktop)
 
 I suspect the buffers were requested, but since only 4 bytes were needed from each, only a fraction of the buffer was used.
 
@@ -296,9 +296,25 @@ getconf PAGESIZE
 4096
 ```
 
-TODO: rerun with 900,000
+```
+131072 bytes for recive
+16384 for write
+(131072+16384)*2*840000
+=247 GB virtual memory
 
-TODO: flame graphs
+4096 bytes pagesize
+(4096+4096)*2*840000
+=13 GB
+```
+I have no idea how this didn't crash.
+Even if I only used 247GB of virtual memory and only actually used 1 page for each send and receive buffer,
+that's still 13GB which exceeds my desktop's 8GB limit.
+
+```
+TODO: consider removing this since I'm not learning anything from the data
+      I was hoping that the flamegraph would tell me why it was so slow.
+      It took six minutes to open all the connections and send a message both ways.
+```
 https://github.com/jvm-profiling-tools/async-profiler
 ```
 sudo apt install openjdk-8-dbg
