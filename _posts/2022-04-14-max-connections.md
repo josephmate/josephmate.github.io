@@ -7,15 +7,15 @@ comments: true
 categories: [Java, Server, Connections]
 ---
 
-I hear this misconception all the time:
+I hear this misconception all the time online and in person:
 
-> (A TCP/IP address only supports 65,000 connections, so you would have to have to assign around 30,000 IP addresses to that server.)[https://www.quora.com/Is-it-possible-to-handle-1-billion-connections-simultaneously-in-Java-with-a-single-server]
+> [A TCP/IP address only supports 65,000 connections, so you would have to have to assign around 30,000 IP addresses to that server.](https://www.quora.com/Is-it-possible-to-handle-1-billion-connections-simultaneously-in-Java-with-a-single-server)
 
-> (There are 65535 TCP port numbers, does that mean only 65535 clients can connect to a TCP server? One might think that this places a hard limit on the number of clients that a single computer/application can maintain.)[https://networkengineering.stackexchange.com/questions/48283/is-a-tcp-server-limited-to-65535-clients]
+> [There are 65535 TCP port numbers, does that mean only 65535 clients can connect to a TCP server? One might think that this places a hard limit on the number of clients that a single computer/application can maintain.](https://networkengineering.stackexchange.com/questions/48283/is-a-tcp-server-limited-to-65535-clients)
 
-> (If there is a limit on the number of ports one machine can have and a socket can only bind to an unused port number, how do servers experiencing extremely high amounts (more than the max port number) of requests handle this? Is it just done by making the system distributed, i.e., many servers on many machines?)[https://serverfault.com/questions/533611/how-do-high-traffic-sites-service-more-than-65535-tcp-connections]
+> [If there is a limit on the number of ports one machine can have and a socket can only bind to an unused port number, how do servers experiencing extremely high amounts (more than the max port number) of requests handle this? Is it just done by making the system distributed, i.e., many servers on many machines?](https://serverfault.com/questions/533611/how-do-high-traffic-sites-service-more-than-65535-tcp-connections)
 
-> (When a request comes in, it gets rerouted to one of several available servers for the request. But there's only 64k ports available so at any given time there can only be 64k outgoing requests max. So how can some websites serve millions of concurrent requests then? If someone could clear up this confusion that would be awesome. Thanks!)[https://serverfault.com/questions/914997/how-does-a-load-balancer-get-around-the-64k-port-limit]
+> [When a request comes in, it gets rerouted to one of several available servers for the request. But there's only 64k ports available so at any given time there can only be 64k outgoing requests max. So how can some websites serve millions of concurrent requests then? If someone could clear up this confusion that would be awesome. Thanks!](https://serverfault.com/questions/914997/how-does-a-load-balancer-get-around-the-64k-port-limit)
 
 and many more!
 
@@ -29,18 +29,18 @@ Jump to the summary at the end if you want to skip the details.
 
 # Experiments
 
-The Pheonix framework which (achieved 2,000,000 concurrent websocket connections)[https://www.phoenixframework.org/blog/the-road-to-2-million-websocket-connections].
+The Pheonix framework which [achieved 2,000,000 concurrent websocket connections](https://www.phoenixframework.org/blog/the-road-to-2-million-websocket-connections).
 In the article they demonstrate a chatting application where they simulate 2 million users, taking 1 second to broadcast to all users.
 They also provide details on the technically challenges these hit with their framework to achieve that benchmark.
 
-WhatsApp also (achieved 2,000,000)[https://blog.whatsapp.com/1-million-is-so-2011].
+WhatsApp also [achieved 2,000,000](https://blog.whatsapp.com/1-million-is-so-2011).
 Unfortunately, they only provide the details of the hardware and the OS configuration they used.
 
 Coincidentally, both are built on Erlang and both achieved this on chatting applications.
 
 # Theoretical Max
 
-Some think the limit 2^16=65,536 because that's all the ports available.
+Some think the limit 2<sup>16</sup>=65,536 because that's all the ports available.
 That's true for a single client making a connection to an IP, port pair.
 For instance, my laptop will only be able to make 65000 connections to Google (probably a lot less due to NAT and they will block me before I reach 65k connections).
 So if you have a usecase with intense intertwined communciation between two machines using more than 65K concurrent connections, the client will need to connect from a second IP address.
@@ -56,14 +56,14 @@ Each packet has:
 3. 32bit destination IP (the IP address the connection is going to)
 4. 16bit destination port (the port on the destination IP address the connection is going to)
 
-Then theoretical limit is 2^48 - 1 which is about 1 quadrillion because:
+Then theoretical limit is 2<sup>48</sup> - 1 which is about 1 quadrillion because:
 
 1. [number of source IP addresses]x[num of source ports]
 2. because the server multiplexes the connections from the client using that.
 3. 32 bits for the address and 16 bits for the port
 4. -1 because the IP,port pair consumed by the current server
-4. In total is 2^48 - 1.
-5. Which is about a quadrillion (log(2^48 - 1)/log(10)=14.449)!
+4. In total is 2<sup>48</sup> - 1.
+5. Which is about a quadrillion (log(2<sup>48</sup> - 1)/log(10)=14.449)!
 
 # Practical Limit
 For understanding the practical limit,
@@ -72,7 +72,7 @@ and have the server send and receive a message on each connection.
 
 ## The experiment
 If you're interested in the source code, take a look 
-(here)[https://github.com/josephmate/java-by-experiments/blob/main/max_connections/src/Main.java].
+[here](https://github.com/josephmate/java-by-experiments/blob/main/max_connections/src/Main.java).
 
 The psuedo code is:
 
@@ -159,7 +159,7 @@ ulimit -Sn 2000000
 ```
 as recommend by this [stackoverflow answer](https://superuser.com/a/1644788).
 
-For Ubuntu 20.04, I the quickest way is to:
+For Ubuntu 20.04, the quickest way is to:
 ```
 sudo su
 # 2^25 should be more than enough
@@ -211,7 +211,7 @@ java.base/java.net.DelegatingSocketImpl.bind(DelegatingSocketImpl.java:94)
 
 The final battle is the TCP/IP specification.
 Your laptop is limited to about 65,000 client ports.
-Our experiment way beyond that.
+Our experiment goes way beyond that.
 As a result, we work around this by conservatively assigning a client IP address for every 5,000 client connections.
 
 On bigSur 11.4 you can add a bunch of fake loopback addresses with:
@@ -324,7 +324,7 @@ You could improve upon my result if you have more memory.
 1. Pheonix Framework achieved 2,000,000 connections
 2. WhatsApp achieved 2,000,000 connections
 3. Theortical limit is ~1 quadrillion (1,000,000,000,000,000)
-4. You will run out of source ports (only 2^16)
+4. You will run out of source ports (only 2<sup>16</sup>)
 5. You can fix this by creating 
 6. You will run out of file descriptors
 7. You can fix this by overriding the file descriptor limits of your OS
