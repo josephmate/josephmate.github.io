@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "1,000,000 Concurrent Connections"
-date: 2022-04-07 11:59
+date: 2022-04-14 11:59
 author: joseph
 comments: true
 categories: [Java, Server, Connections]
@@ -11,55 +11,64 @@ I hear this misconception all the time:
 
 > (A TCP/IP address only supports 65,000 connections, so you would have to have to assign around 30,000 IP addresses to that server.)[https://www.quora.com/Is-it-possible-to-handle-1-billion-connections-simultaneously-in-Java-with-a-single-server]
 
+> (There are 65535 TCP port numbers, does that mean only 65535 clients can connect to a TCP server? One might think that this places a hard limit on the number of clients that a single computer/application can maintain.)[https://networkengineering.stackexchange.com/questions/48283/is-a-tcp-server-limited-to-65535-clients]
+
+> (If there is a limit on the number of ports one machine can have and a socket can only bind to an unused port number, how do servers experiencing extremely high amounts (more than the max port number) of requests handle this? Is it just done by making the system distributed, i.e., many servers on many machines?)[https://serverfault.com/questions/533611/how-do-high-traffic-sites-service-more-than-65535-tcp-connections]
+
+> (When a request comes in, it gets rerouted to one of several available servers for the request. But there's only 64k ports available so at any given time there can only be 64k outgoing requests max. So how can some websites serve millions of concurrent requests then? If someone could clear up this confusion that would be awesome. Thanks!)[https://serverfault.com/questions/914997/how-does-a-load-balancer-get-around-the-64k-port-limit]
+
+and many more!
+
 So I put together this article arguing from three directions:
 
-1. WhatsApp and Pheonix have already demonstrated achieving millions of connections on a server.
+1. WhatsApp a chatting app  and Pheonix a web framework build on top of Erlang have already demonstrated achieving millions of connections on a single server using a single port.
 2. What's theorically possible based on the TCP/IP protocol
-3. A simple Java experiment anyone can run on their machine if there are still not convinced.
+3. A simple Java experiment anyone can run on their machine if they are still not convinced.
 
 Jump to the summary at the end if you want to skip the details.
 
 # Experiments
 
-The Pheonix framework which (achieved 2,000,000 concurrent websocket connections)[https://www.phoenixframework.org/blog/the-road-to-2-million-websocket-connections]
-(WhatsApp also achieved 2,000,000)[https://blog.whatsapp.com/1-million-is-so-2011].
-Interestingly, both are built on Erlang.
+The Pheonix framework which (achieved 2,000,000 concurrent websocket connections)[https://www.phoenixframework.org/blog/the-road-to-2-million-websocket-connections].
+In the article they demonstrate a chatting application where they simulate 2 million users, taking 1 second to broadcast to all users.
+They also provide details on the technically challenges these hit with their framework to achieve that benchmark.
+
+WhatsApp also (achieved 2,000,000)[https://blog.whatsapp.com/1-million-is-so-2011].
+Unfortunately, they only provide the details of the hardware and the OS configuration they used.
+
+Coincidentally, both are built on Erlang and both achieved this on chatting applications.
 
 # Theoretical Max
 
-Some think it's 2^16=65,536 because that's all the port available.
-That's true for a client making a connection to an IP, port pair.
-For instance, my laptop will only be able to make 65000 connections to Google (probably a lot less due to NAT).
+Some think the limit 2^16=65,536 because that's all the ports available.
+That's true for a single client making a connection to an IP, port pair.
+For instance, my laptop will only be able to make 65000 connections to Google (probably a lot less due to NAT and they will block me before I reach 65k connections).
+So if you have a usecase with intense intertwined communciation between two machines using more than 65K concurrent connections, the client will need to connect from a second IP address.
 
-However, for a server listening on a port, connections will be coming from multiple IP addresses.
-So a server listening to one port,
-on one IP address in the best case will be able to listen to all IP address,
-coming from all ports on the IP addresses.
-
-To understand the theortical max,
-you need to understand a little bit of TCP over IP.
+For a server listening on a port, each incoming connection *DOES NOT* consume a port on the server.
+The server only consumes the one port that it is listening on.
+Secondly connections will be coming from multiple IP addresses.
+In the best case the server will be able to listen to all IP address, coming from all ports.
 
 Each packet has:
-1. 32bit source IP (the IP address the packet is coming from)
-2. 16bit source port (the port on the source IP address the packet is coming from)
-3. 32bit destination IP (the IP address the packet is going to)
-4. 16bit destination port (the port on the destination IP address the packet is
-   going to)
+1. 32bit source IP (the IP address the connection is coming from)
+2. 16bit source port (the port on the source IP address the connection is coming from)
+3. 32bit destination IP (the IP address the connection is going to)
+4. 16bit destination port (the port on the destination IP address the connection is going to)
 
-Then theoretical limit is 2^48 which is about 1 quadrillion because:
+Then theoretical limit is 2^48 - 1 which is about 1 quadrillion because:
 
 1. [number of source IP addresses]x[num of source ports]
-2. You could have multiple IP addresses and ports logically implemented by the
-   same server, but source IP and source port are more than enough.
 2. because the server multiplexes the connections from the client using that.
 3. 32 bits for the address and 16 bits for the port
-4. In total is 2^48.
-5. Which is about a billion connections (log(2^48)/log(10)=14.449)!
+4. -1 because the IP,port pair consumed by the current server
+4. In total is 2^48 - 1.
+5. Which is about a quadrillion (log(2^48 - 1)/log(10)=14.449)!
 
 # Practical Limit
-For understanding the practical limit, I put together some experiments try to
-open as many TCP connections have have the server send and receive a message on
-each connection.
+For understanding the practical limit,
+I put together some experiments trying to open as many TCP connections 
+and have the server send and receive a message on each connection.
 
 ## The experiment
 If you're interested in the source code, take a look 
@@ -125,7 +134,7 @@ Caused by: java.io.IOException: Too many open files
 
 Each server socket needs two file descriptors:
 
-1. A buffer for send
+1. A buffer for sending
 2. A buffer for receiving
 
 The same goes for client connections.
@@ -167,8 +176,7 @@ Now that operating system is complying,
 the JVM doesn't like what you're doing with this experiment either.
 When you run the experiment you still get the same or similar stack trace.
 
-This [stackoverflow answer]( https://superuser.com/a/1398360) identifies a JVM
-flag as the solution:
+This [stackoverflow answer]( https://superuser.com/a/1398360) identifies a JVM flag as the solution:
 
 > [`-XX:-MaxFDLimit` :     Disables the attempt to set the soft limit for the
 > number of open file descriptors to the hard limit. By default, this option is
@@ -185,7 +193,7 @@ I was able to get the experiment to run without the flag on Ubuntu.
 ## Source Ports
 
 It still won't work.
-You encounter a stacktrace like:
+You will encounter a stacktrace like:
 ```
 Exception in thread "main" java.net.BindException: Can't assign requested
 address
@@ -202,16 +210,16 @@ java.base/java.net.DelegatingSocketImpl.bind(DelegatingSocketImpl.java:94)
 ```
 
 The final battle is the TCP/IP specification.
-You laptop is limited to about 65,000 client ports.
-Our experiment well exceeds this limit.
-As a result, we work around this by conservatively assigning an IP address for every 5,000 client connections.
+Your laptop is limited to about 65,000 client ports.
+Our experiment way beyond that.
+As a result, we work around this by conservatively assigning a client IP address for every 5,000 client connections.
 
-On bigSur 11.4 you can add with:
+On bigSur 11.4 you can add a bunch of fake loopback addresses with:
 ```
 for i in `seq 0 200`; do sudo ifconfig lo0 alias 10.0.0.$i/8 up  ; done 
 ```
 
-To test:
+To test to make sure you IP addresses are working you can ping them:
 ```
 for i in `seq 0 200`; do ping -c 1 10.0.0.$i  ; done 
 ```
@@ -221,7 +229,7 @@ To remove:
 for i in `seq 0 200`; do sudo ifconfig lo0 alias 10.0.0.$i  ; done 
 ```
 
-On Ubuntu 20.04 you can:
+On Ubuntu 20.04 you you need to use the `ip` tool instead:
 ```
 for i in `seq 0 200`; do sudo ip addr add 10.0.0.$i/8 dev lo; done 
 ```
@@ -236,27 +244,26 @@ for i in `seq 0 200`; do sudo ip addr del 10.0.0.$i/8 dev lo; done
 
 *On Mac*, I was able to reach 80,000.
 However, mysterously a few minutes after running the experiment,
-the Mac crashes without any crash reports in `/Library/Logs/DiagnosticReports` so I'm not able to diagnose what happened.
+my poor Mac crashes everytime without any crash reports in `/Library/Logs/DiagnosticReports` so I'm not able to diagnose what happened.
+
+The tcp send and receive buffers on my Mac are 131072 bytes:
 ```
 sysctl net | grep tcp | grep -E '(recv)|(send)'
 net.inet.tcp.sendspace: 131072
 net.inet.tcp.recvspace: 131072
-
-pagesize
-4096
 ```
 
-80000*131072*2*2 bytes is about 39GB.
-Could that be why my Mac crashed?
-Was it unable handle that much virtual memory?
-I'm not familiar with debugging on Mac without a crash report so if anyone has any resources let me know.
+So it might be because I used `80000connections*131072 bytes per buffer * 2 input and output buffer * 2 client and server connection` bytes which is about 39GB virtual memory.
+Or maybe it was the Mac OS didn't like me using 80,000*2*2=320,000 file descriptors.
 
-*On Linux*, I was able to reach 800,000.
+Unfortunately, I'm not familiar with debugging on Mac without a crash report so if anyone has any resources let me know.
+
+*On Linux*, I was able to reach 840,000!
 However, while the experiment ran,
 my mouse movements would take a few seconds to register on my screen.
 Anything beyond that and my Linux would freeze and become unreponsive.
 
-I used sysstat to investigate what resource was in contention:
+I used (sysstat)[https://github.com/sysstat/sysstat] to investigate what resource was in contention:
 https://raw.githubusercontent.com/josephmate/java-by-experiments/main/max_connections/data/out.840000.svg
 
 ```
@@ -264,7 +271,6 @@ sar -o out.840000.sar -A 1 3600 2>&1 > /dev/null  &
 sadf -g  out.840000.sar -- -w -r -u -n SOCK -n TCP -B -S -W > out.840000.svg
 ```
 
-TODO: update these facts with the latest experiment
 Some interesting facts:
 
 * MBmemfree bottomed out at 96MB
@@ -272,11 +278,11 @@ Some interesting facts:
 * MBmemused was only 1602MB (19.6% of my total 8GB)
 * MBswpused peeked at 1086MB (despite memory still available)
 * 1,680,483 sockets (840k server sockets and 840k client connections plus what ever else was running on my desktop)
+* OS decided to start using swap a few seconds into the experiment even though I had more memory
 
 I suspect the buffers were requested, but since only 4 bytes were needed from each, only a fraction of the buffer was used.
 
-On linux:
-https://stackoverflow.com/questions/7865069/how-to-find-the-socket-buffer-size-of-linux
+On linux (to find the default size of your send and received buffers you can use:)[https://stackoverflow.com/questions/7865069/how-to-find-the-socket-buffer-size-of-linux]
 ```
 # minimum, default and maximum memory size values (in byte)
 cat /proc/sys/net/ipv4/tcp_rmem
@@ -290,52 +296,28 @@ sysctl net.ipv4.tcp_wmem
 net.ipv4.tcp_wmem = 4096        16384   4194304
 ```
 
-Memory page size
-```
-getconf PAGESIZE
-4096
-```
-
+So to support all the connections, I would need 247GB of virtual memory!
 ```
 131072 bytes for recive
 16384 for write
 (131072+16384)*2*840000
 =247 GB virtual memory
+```
+
+But even if I only I load 1 page of memory because I only need to write 4 bytes
+to write an integer to the buffer:
+```
+getconf PAGESIZE
+4096
 
 4096 bytes pagesize
 (4096+4096)*2*840000
 =13 GB
 ```
-I have no idea how this didn't crash.
-Even if I only used 247GB of virtual memory and only actually used 1 page for each send and receive buffer,
-that's still 13GB which exceeds my desktop's 8GB limit.
-
-```
-TODO: consider removing this since I'm not learning anything from the data
-      I was hoping that the flamegraph would tell me why it was so slow.
-      It took six minutes to open all the connections and send a message both ways.
-```
-https://github.com/jvm-profiling-tools/async-profiler
-```
-sudo apt install openjdk-8-dbg
-gdb /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64/server/libjvm.so -ex 'info address UseG1GC'
-.
-.
-.
-Symbol "UseG1GC" is at 0xdd9042 in a file compiled without debugging.
-
-sudo sysctl kernel.perf_event_paranoid=1
-kernel.perf_event_paranoid = 1
-sudo sysctl kernel.kptr_restrict=0
-kernel.kptr_restrict = 0
-
--agentpath:/home/joseph/lib/async-profiler-2.7-linux-x64/build/libasyncProfiler.so=start,collapsed,event=wall,file=collapsed.wall.txt
-
-https://raw.githubusercontent.com/brendangregg/FlameGraph/master/flamegraph.pl
-
-flamegraph.pl collapsed.wall.txt > flamegraph.svg
-
-```
+then I use 13GB from touching `2*840000` pages of memory.
+I have no idea how this didn't crash!
+I'm happy with 840,000 concurrent connections though.
+You could improve upon my result if you have more memory.
 
 # Summary
 
