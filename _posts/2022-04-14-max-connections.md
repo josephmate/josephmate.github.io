@@ -352,16 +352,3 @@ How many can you run? Let me know!
 10. Practical limit on my 16GB Mac is 80,000 
 11. Practical limit on my 8GB Linux is 840,000
 
-
-# Discussion
-
-Head over to [this github issue](https://github.com/josephmate/josephmate.github.io/issues/47) to add comments.
-
-<script src="https://utteranc.es/client.js"
-        repo="josephmate/josephmate.github.io"
-        issue-number="47"
-        theme="github-light"
-        crossorigin="anonymous"
-        async>
-</script>
-
