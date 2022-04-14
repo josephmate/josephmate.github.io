@@ -7,7 +7,9 @@ comments: true
 categories: [Java, Server, Connections]
 ---
 
-I hear this misconception all the time online and in person:
+I hear the misconception that a server can only accept 65K connections
+or a server consumes a port for each accepted connection all the time.
+Here is a taste of some of them:
 
 > [A TCP/IP address only supports 65,000 connections, so you would have to have to assign around 30,000 IP addresses to that server.](https://www.quora.com/Is-it-possible-to-handle-1-billion-connections-simultaneously-in-Java-with-a-single-server)
 
@@ -17,21 +19,19 @@ I hear this misconception all the time online and in person:
 
 > [When a request comes in, it gets rerouted to one of several available servers for the request. But there's only 64k ports available so at any given time there can only be 64k outgoing requests max. So how can some websites serve millions of concurrent requests then? If someone could clear up this confusion that would be awesome. Thanks!](https://serverfault.com/questions/914997/how-does-a-load-balancer-get-around-the-64k-port-limit)
 
-and many more!
+So I put together this article to dispel this myth from three directions:
 
-So I put together this article arguing from three directions:
-
-1. WhatsApp a chatting app  and Pheonix a web framework build on top of Erlang have already demonstrated achieving millions of connections on a single server using a single port.
-2. What's theorically possible based on the TCP/IP protocol
+1. WhatsApp, a chatting app, and Phoenix a web framework built on top of Erlang, have already demonstrated achieving millions of connections on a single server using a single port.
+2. What is theoretically possible based on the TCP/IP protocol
 3. A simple Java experiment anyone can run on their machine if they are still not convinced.
 
 Jump to the summary at the end if you want to skip the details.
 
 # Experiments
 
-The Pheonix framework which [achieved 2,000,000 concurrent websocket connections](https://www.phoenixframework.org/blog/the-road-to-2-million-websocket-connections).
-In the article they demonstrate a chatting application where they simulate 2 million users, taking 1 second to broadcast to all users.
-They also provide details on the technically challenges these hit with their framework to achieve that benchmark.
+The Phoenix framework which [achieved 2,000,000 concurrent websocket connections](https://www.phoenixframework.org/blog/the-road-to-2-million-websocket-connections).
+In the article they demonstrate a chat application where they simulate 2 million users, taking 1 second to broadcast to all users.
+They also provide details on the technical challenges they hit with their framework to achieve that benchmark.
 
 WhatsApp also [achieved 2,000,000](https://blog.whatsapp.com/1-million-is-so-2011).
 Unfortunately, they only provide the details of the hardware and the OS configuration they used.
@@ -43,18 +43,18 @@ Coincidentally, both are built on Erlang and both achieved this on chatting appl
 Some think the limit 2<sup>16</sup>=65,536 because that's all the ports available.
 That's true for a single client making a connection to an IP, port pair.
 For instance, my laptop will only be able to make 65000 connections to Google (probably a lot less due to NAT and they will block me before I reach 65k connections).
-So if you have a usecase with intense intertwined communciation between two machines using more than 65K concurrent connections, the client will need to connect from a second IP address.
+So if you have a use case with intense intertwined communication between two machines using more than 65K concurrent connections, the client will need to connect from a second IP address.
 
 For a server listening on a port, each incoming connection *DOES NOT* consume a port on the server.
 The server only consumes the one port that it is listening on.
 Secondly connections will be coming from multiple IP addresses.
-In the best case the server will be able to listen to all IP address, coming from all ports.
+In the best case the server will be able to listen to all IP addresses, coming from all ports.
 
 Each packet has:
-1. 32bit source IP (the IP address the connection is coming from)
-2. 16bit source port (the port on the source IP address the connection is coming from)
-3. 32bit destination IP (the IP address the connection is going to)
-4. 16bit destination port (the port on the destination IP address the connection is going to)
+1. 32 bit source IP (the IP address the connection is coming from)
+2. 16 bit source port (the port on the source IP address the connection is coming from)
+3. 32 bit destination IP (the IP address the connection is going to)
+4. 16 bit destination port (the port on the destination IP address the connection is going to)
 
 Then theoretical limit is 2<sup>48</sup> - 1 which is about 1 quadrillion because:
 
@@ -62,24 +62,32 @@ Then theoretical limit is 2<sup>48</sup> - 1 which is about 1 quadrillion becaus
 2. because the server multiplexes the connections from the client using that.
 3. 32 bits for the address and 16 bits for the port
 4. -1 because the IP,port pair consumed by the current server
-4. In total is 2<sup>48</sup> - 1.
+4. Putting that all together: 2<sup>32</sup> * 2<sup>16</sup> -1 =  2<sup>48</sup> - 1.
 5. Which is about a quadrillion (log(2<sup>48</sup> - 1)/log(10)=14.449)!
 
 # Practical Limit
 For understanding the practical limit,
 I put together some experiments trying to open as many TCP connections 
 and have the server send and receive a message on each connection.
+The workload is nowhere near as practical as
+[Phoenix's](https://www.phoenixframework.org/blog/the-road-to-2-million-websocket-connections)
+or
+[WhatsApp's](https://blog.whatsapp.com/1-million-is-so-2011)
+articles but simpler to run if you wanted to try for yourself.
+You will need to overcome three battles to get the experiment to run:
+the OS, the JVM, and the TCP/IP protocol.
 
 ## The experiment
 If you're interested in the source code, take a look 
 [here](https://github.com/josephmate/java-by-experiments/blob/main/max_connections/src/Main.java).
 
-The psuedo code is:
+The pseudo code is:
 
 ```
 Thread 1:
+  open server socket
   for i from 1 to 1 000 000:
-    open server socket
+    accept incoming connection
   for i from 1 to 1 000 000
     send number i on socket i
   for i from 1 to 1 000 000
@@ -138,7 +146,7 @@ Each server socket needs two file descriptors:
 2. A buffer for receiving
 
 The same goes for client connections.
-As a result, running this experiment on a single machine whill require:
+As a result, running this experiment on a single machine will require:
 
 * 1,000,000 connection for the client
 * 1,000,000 connection for the server
@@ -157,7 +165,7 @@ kern.maxfilesperproc: 1000000
 ulimit -Hn 2000000
 ulimit -Sn 2000000
 ```
-as recommend by this [stackoverflow answer](https://superuser.com/a/1644788).
+as recommended by this [stackoverflow answer](https://superuser.com/a/1644788).
 
 For Ubuntu 20.04, the quickest way is to:
 ```
@@ -172,7 +180,7 @@ ulimit -Sn 33554432
 
 ## Java File Descriptor Limits
 
-Now that operating system is complying,
+Now that the operating system is complying,
 the JVM doesn't like what you're doing with this experiment either.
 When you run the experiment you still get the same or similar stack trace.
 
@@ -243,7 +251,7 @@ for i in `seq 0 200`; do sudo ip addr del 10.0.0.$i/8 dev lo; done
 ## Results
 
 *On Mac*, I was able to reach 80,000.
-However, mysterously a few minutes after running the experiment,
+However, mysteriously a few minutes after running the experiment,
 my poor Mac crashes everytime without any crash reports in `/Library/Logs/DiagnosticReports` so I'm not able to diagnose what happened.
 
 The tcp send and receive buffers on my Mac are 131072 bytes:
@@ -253,15 +261,14 @@ net.inet.tcp.sendspace: 131072
 net.inet.tcp.recvspace: 131072
 ```
 
-So it might be because I used `80000connections*131072 bytes per buffer * 2 input and output buffer * 2 client and server connection` bytes which is about 39GB virtual memory.
-Or maybe it was the Mac OS didn't like me using 80,000*2*2=320,000 file descriptors.
-
+So it might be because I used `80000 connections*131072 bytes per buffer * 2 input and output buffer * 2 client and server connection` bytes which is about 39GB virtual memory.
+Or maybe Mac OS didn't like me using 80,000*2*2=320,000 file descriptors.
 Unfortunately, I'm not familiar with debugging on Mac without a crash report so if anyone has any resources let me know.
 
 *On Linux*, I was able to reach 840,000!
 However, while the experiment ran,
 my mouse movements would take a few seconds to register on my screen.
-Anything beyond that and my Linux would freeze and become unreponsive.
+Anything beyond that and my Linux would freeze and become unresponsive.
 
 I used (sysstat)[https://github.com/sysstat/sysstat] to investigate what resource was in contention:
 https://raw.githubusercontent.com/josephmate/java-by-experiments/main/max_connections/data/out.840000.svg
@@ -273,18 +280,18 @@ sadf -g  out.840000.sar -- -w -r -u -n SOCK -n TCP -B -S -W > out.840000.svg
 
 Some interesting facts:
 
-* MBmemfree bottomed out at 96MB
-* MBavail was still 1587MB
-* MBmemused was only 1602MB (19.6% of my total 8GB)
-* MBswpused peeked at 1086MB (despite memory still available)
-* 1,680,483 sockets (840k server sockets and 840k client connections plus what ever else was running on my desktop)
+* `MBmemfree` bottomed out at 96 MB
+* `MBavail` was still 1587MB
+* `MBmemused` was only 1602MB (19.6% of my total 8GB)
+* `MBswpused` peeked at 1086MB (despite memory still available)
+* 1,680,483 sockets (840k server sockets and 840k client connections plus whatever else was running on my desktop)
 * OS decided to start using swap a few seconds into the experiment even though I had more memory
 
 I suspect the buffers were requested, but since only 4 bytes were needed from each, only a fraction of the buffer was used.
 
-On linux (to find the default size of your send and received buffers you can use:)[https://stackoverflow.com/questions/7865069/how-to-find-the-socket-buffer-size-of-linux]
+On linux [to find the default size of your send and receive buffers you can use:](https://stackoverflow.com/questions/7865069/how-to-find-the-socket-buffer-size-of-linux)
 ```
-# minimum, default and maximum memory size values (in byte)
+# minimum, default and maximum memory size values (in bytes)
 cat /proc/sys/net/ipv4/tcp_rmem
 4096    131072  6291456
 cat /proc/sys/net/ipv4/tcp_wmem
@@ -296,9 +303,9 @@ sysctl net.ipv4.tcp_wmem
 net.ipv4.tcp_wmem = 4096        16384   4194304
 ```
 
-So to support all the connections, I would need 247GB of virtual memory!
+So to support all the connections, I would need 247 GB of virtual memory!
 ```
-131072 bytes for recive
+131072 bytes for receive 
 16384 for write
 (131072+16384)*2*840000
 =247 GB virtual memory
@@ -321,9 +328,9 @@ You could improve upon my result if you have more memory.
 
 # Summary
 
-1. Pheonix Framework achieved 2,000,000 connections
+1. Phoenix Framework achieved 2,000,000 connections
 2. WhatsApp achieved 2,000,000 connections
-3. Theortical limit is ~1 quadrillion (1,000,000,000,000,000)
+3. Theoretical limit is ~1 quadrillion (1,000,000,000,000,000)
 4. You will run out of source ports (only 2<sup>16</sup>)
 5. You can fix this by creating 
 6. You will run out of file descriptors
