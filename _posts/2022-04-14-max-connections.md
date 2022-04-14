@@ -19,7 +19,7 @@ Here is a taste of some of them:
 
 So I put together this article to dispel this myth from three directions:
 
-1. WhatsApp, a chatting app you have probably used, and Phoenix, a web framework built on top of Elixir, have already demonstrated achieving millions of connections on a single server using a single port.
+1. WhatsApp, a chatting app you have probably used, and Phoenix, a web framework built on top of Elixir, have already demonstrated millions of connections listening to a single port.
 2. What is theoretically possible based on the TCP/IP protocol
 3. A simple Java experiment anyone can run on their machine if they are still not convinced.
 
@@ -40,34 +40,35 @@ They only reveal the hardware and the OS configuration they used.
 # Theoretical Max
 
 Some think the limit 2<sup>16</sup>=65,536 because that's all the ports available in the TCP spec.
-That is true for a single client making outgoing connections to a single IP, port pair.
+That limit is true for a single client making outgoing connections to a single IP, port pair.
 For instance, my laptop will only be able to make 65,536 connections to
-172.217.13.174 (google.com)
-(probably a lot less because they will block me before I reach 65k connections).
+172.217.13.174:443 (google.com:443)
+Google would probably block me before I reached 65k connections.
 So if you have a use case with intense intertwined communication between two machines using more than 65K concurrent connections,
-the client will need to connect from a second IP address.
+the client will need to connect from a second IP address,
+or the server needs to make a second port available.
 
 For a server listening on a port, each incoming connection *DOES NOT* consume a port on the server.
 The server only consumes the one port that it is listening on.
 Secondly connections will be coming from multiple IP addresses.
 In the best case the server will be able to listen to all IP addresses, coming from all ports.
 
-Each packet has:
+Each tcp connection is uniquely defined by:
 1. 32 bit source IP (the IP address the connection is coming from)
 2. 16 bit source port (the port on the source IP address the connection is coming from)
 3. 32 bit destination IP (the IP address the connection is going to)
 4. 16 bit destination port (the port on the destination IP address the connection is going to)
 
-Then theoretical limit is 2<sup>48</sup> which is about 1 quadrillion because:
+Then theoretical limit a server can support on a single port is 2<sup>48</sup> which is about 1 quadrillion because:
 
+1. The server distinguishes the connections from clients' source IPs and the source ports
 1. [number of source IP addresses]x[num of source ports]
-2. because the server multiplexes the connections from the client using that.
 3. 32 bits for the address and 16 bits for the port
-4. Putting that all together: 2<sup>32</sup> * 2<sup>16</sup> =  2<sup>48</sup>.
-5. Which is about a quadrillion (log(2<sup>48</sup> - 1)/log(10)=14.449)!
+4. Putting that all together: 2<sup>32</sup> x 2<sup>16</sup> =  2<sup>48</sup>.
+5. Which is about a quadrillion (log(2<sup>48</sup>)/log(10)=14.449)!
 
 # Practical Limit
-To understand the practical limit,
+To understand an optimistic practical limit,
 I put together some experiments trying to open as many TCP connections 
 and have the server send and receive a message on each connection.
 The workload is nowhere near as practical as
@@ -297,8 +298,6 @@ Some interesting facts:
 * 1,680,483 sockets (840k server sockets and 840k client connections plus whatever else was running on my desktop)
 * OS decided to start using swap a few seconds into the experiment even though I had more memory
 
-I suspect the buffers were requested, but since only 4 bytes were needed from each, only a fraction of the buffer was used.
-
 On linux [to find the default size of your send and receive buffers you can use:](https://stackoverflow.com/questions/7865069/how-to-find-the-socket-buffer-size-of-linux)
 ```
 # minimum, default and maximum memory size values (in bytes)
@@ -321,8 +320,8 @@ So to support all the connections, I would need 247 GB of virtual memory!
 =247 GB virtual memory
 ```
 
-But even if I only I load 1 page of memory because I only need to write 4 bytes
-to write an integer to the buffer:
+I suspect the buffers were requested, but since only 4 bytes were needed from each, only a fraction of the buffers were used.
+Even if I only I load 1 page of memory because I only need to write 4 bytes to write an integer to the buffer:
 ```
 getconf PAGESIZE
 4096
@@ -336,7 +335,7 @@ I have no idea how this didn't crash!
 I'm happy with 840,000 concurrent connections though.
 
 You could improve upon my result if you have more memory,
-or further optimize the OS settings like reducing the buffer size.
+or further optimize the OS settings like reducing the tcp buffer sizes.
 How many can you run? Let me know!
 
 # Summary
@@ -352,4 +351,12 @@ How many can you run? Let me know!
 9. You can override this by adding the `-XX:MaxFDLimit` JVM argument
 10. Practical limit on my 16GB Mac is 80,000 
 11. Practical limit on my 8GB Linux is 840,000
+
+<script src="https://utteranc.es/client.js"
+        repo="josephmate/josephmate.github.io"
+        issue-number="47"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script>
 
