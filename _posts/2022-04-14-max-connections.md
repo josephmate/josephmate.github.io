@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "1,000,000 Concurrent Connections"
-date: 2022-04-14 11:59
+date: 2022-04-14 9:00
 author: joseph
 comments: true
 categories: [Java, Server, Connections]
@@ -17,11 +17,9 @@ Here is a taste of some of them:
 
 > [If there is a limit on the number of ports one machine can have and a socket can only bind to an unused port number, how do servers experiencing extremely high amounts (more than the max port number) of requests handle this? Is it just done by making the system distributed, i.e., many servers on many machines?](https://serverfault.com/questions/533611/how-do-high-traffic-sites-service-more-than-65535-tcp-connections)
 
-> [When a request comes in, it gets rerouted to one of several available servers for the request. But there's only 64k ports available so at any given time there can only be 64k outgoing requests max. So how can some websites serve millions of concurrent requests then? If someone could clear up this confusion that would be awesome. Thanks!](https://serverfault.com/questions/914997/how-does-a-load-balancer-get-around-the-64k-port-limit)
-
 So I put together this article to dispel this myth from three directions:
 
-1. WhatsApp, a chatting app, and Phoenix a web framework built on top of Erlang, have already demonstrated achieving millions of connections on a single server using a single port.
+1. WhatsApp, a chatting app you have probably used, and Phoenix, a web framework built on top of Elixir, have already demonstrated achieving millions of connections on a single server using a single port.
 2. What is theoretically possible based on the TCP/IP protocol
 3. A simple Java experiment anyone can run on their machine if they are still not convinced.
 
@@ -32,18 +30,22 @@ Jump to the summary at the end if you want to skip the details.
 The Phoenix framework which [achieved 2,000,000 concurrent websocket connections](https://www.phoenixframework.org/blog/the-road-to-2-million-websocket-connections).
 In the article they demonstrate a chat application where they simulate 2 million users, taking 1 second to broadcast to all users.
 They also provide details on the technical challenges they hit with their framework to achieve that benchmark.
+Some of the ideas they shared in their article, I used to write this article,
+like assigning multiple IPs to overcome the 65k limit on client connections.
 
 WhatsApp also [achieved 2,000,000](https://blog.whatsapp.com/1-million-is-so-2011).
-Unfortunately, they only provide the details of the hardware and the OS configuration they used.
-
-Coincidentally, both are built on Erlang and both achieved this on chatting applications.
+Unfortunately, they are light on the details.
+They only reveal the hardware and the OS configuration they used.
 
 # Theoretical Max
 
-Some think the limit 2<sup>16</sup>=65,536 because that's all the ports available.
-That's true for a single client making a connection to an IP, port pair.
-For instance, my laptop will only be able to make 65000 connections to Google (probably a lot less due to NAT and they will block me before I reach 65k connections).
-So if you have a use case with intense intertwined communication between two machines using more than 65K concurrent connections, the client will need to connect from a second IP address.
+Some think the limit 2<sup>16</sup>=65,536 because that's all the ports available in the TCP spec.
+That is true for a single client making outgoing connections to a single IP, port pair.
+For instance, my laptop will only be able to make 65,536 connections to
+172.217.13.174 (google.com)
+(probably a lot less because they will block me before I reach 65k connections).
+So if you have a use case with intense intertwined communication between two machines using more than 65K concurrent connections,
+the client will need to connect from a second IP address.
 
 For a server listening on a port, each incoming connection *DOES NOT* consume a port on the server.
 The server only consumes the one port that it is listening on.
@@ -56,17 +58,16 @@ Each packet has:
 3. 32 bit destination IP (the IP address the connection is going to)
 4. 16 bit destination port (the port on the destination IP address the connection is going to)
 
-Then theoretical limit is 2<sup>48</sup> - 1 which is about 1 quadrillion because:
+Then theoretical limit is 2<sup>48</sup> which is about 1 quadrillion because:
 
 1. [number of source IP addresses]x[num of source ports]
 2. because the server multiplexes the connections from the client using that.
 3. 32 bits for the address and 16 bits for the port
-4. -1 because the IP,port pair consumed by the current server
-4. Putting that all together: 2<sup>32</sup> * 2<sup>16</sup> -1 =  2<sup>48</sup> - 1.
+4. Putting that all together: 2<sup>32</sup> * 2<sup>16</sup> =  2<sup>48</sup>.
 5. Which is about a quadrillion (log(2<sup>48</sup> - 1)/log(10)=14.449)!
 
 # Practical Limit
-For understanding the practical limit,
+To understand the practical limit,
 I put together some experiments trying to open as many TCP connections 
 and have the server send and receive a message on each connection.
 The workload is nowhere near as practical as
@@ -120,7 +121,7 @@ AMD FX(tm)-6300 Six-Core Processor
 ## File Descriptors
 
 First battle you'll encounter is with the operating system.
-The defaults prevent so many file descriptors.
+The defaults severely limit file descriptors.
 You'll see an error like:
 ```
 Exception in thread "main" java.lang.ExceptionInInitializerError
@@ -193,9 +194,9 @@ This [stackoverflow answer]( https://superuser.com/a/1398360) identifies a JVM f
 > 10240, which is lower than the actual system maximum.](https://docs.oracle.com/en/java/javase/16/docs/specs/man/java.html)
 
 ```
-java -XX:-MaxFDLimit -cp out/production/max_connections Main 6000
+java -XX:-MaxFDLimit Main 6000
 ```
-This only seems to be required for the Mac.
+As the above quote from the javadocs says, this is only required for the Mac.
 I was able to get the experiment to run without the flag on Ubuntu.
 
 ## Source Ports
@@ -218,9 +219,17 @@ java.base/java.net.DelegatingSocketImpl.bind(DelegatingSocketImpl.java:94)
 ```
 
 The final battle is the TCP/IP specification.
-Your laptop is limited to about 65,000 client ports.
+Currently we have frozen the server address, server port, and client IP address.
+That leaves us with only 16 bits of freedom.
+As a result, we can only open 65k connections.
+
 Our experiment goes way beyond that.
+We cannot change the server IP nor the server port because that's the problem
+we're exploring with this experiment.
+That leaves us with changing the client IP, giving access to an additional 32 bits of freedom.
 As a result, we work around this by conservatively assigning a client IP address for every 5,000 client connections.
+This is the same technique they used in 
+[Phoenix's experiment](https://www.phoenixframework.org/blog/the-road-to-2-million-websocket-connections).
 
 On bigSur 11.4 you can add a bunch of fake loopback addresses with:
 ```
@@ -237,7 +246,7 @@ To remove:
 for i in `seq 0 200`; do sudo ifconfig lo0 alias 10.0.0.$i  ; done 
 ```
 
-On Ubuntu 20.04 you you need to use the `ip` tool instead:
+On Ubuntu 20.04 you need to use the `ip` tool instead:
 ```
 for i in `seq 0 200`; do sudo ip addr add 10.0.0.$i/8 dev lo; done 
 ```
@@ -251,7 +260,7 @@ for i in `seq 0 200`; do sudo ip addr del 10.0.0.$i/8 dev lo; done
 ## Results
 
 *On Mac*, I was able to reach 80,000.
-However, mysteriously a few minutes after running the experiment,
+However, mysteriously a few minutes after completing the experiment,
 my poor Mac crashes everytime without any crash reports in `/Library/Logs/DiagnosticReports` so I'm not able to diagnose what happened.
 
 The tcp send and receive buffers on my Mac are 131072 bytes:
@@ -261,8 +270,8 @@ net.inet.tcp.sendspace: 131072
 net.inet.tcp.recvspace: 131072
 ```
 
-So it might be because I used `80000 connections*131072 bytes per buffer * 2 input and output buffer * 2 client and server connection` bytes which is about 39GB virtual memory.
-Or maybe Mac OS didn't like me using 80,000*2*2=320,000 file descriptors.
+So it might be because I used `80000 connections*131072 bytes per buffer * 2 input and output buffer * 2 client and server connection` bytes which is about 39 GB virtual memory.
+Or maybe Mac OS didn't like me using `80,000*2*2=320,000` file descriptors.
 Unfortunately, I'm not familiar with debugging on Mac without a crash report so if anyone has any resources let me know.
 
 *On Linux*, I was able to reach 840,000!
@@ -270,9 +279,10 @@ However, while the experiment ran,
 my mouse movements would take a few seconds to register on my screen.
 Anything beyond that and my Linux would freeze and become unresponsive.
 
-I used (sysstat)[https://github.com/sysstat/sysstat] to investigate what resource was in contention:
-https://raw.githubusercontent.com/josephmate/java-by-experiments/main/max_connections/data/out.840000.svg
+I used [sysstat](https://github.com/sysstat/sysstat) to investigate what resource was in contention.
+You can take a look at the graphs sysstat generated [here](https://raw.githubusercontent.com/josephmate/java-by-experiments/main/max_connections/data/out.840000.svg).
 
+I used these commands to get sysstat to record hardware stats on everything and then generate graphs:
 ```
 sar -o out.840000.sar -A 1 3600 2>&1 > /dev/null  &
 sadf -g  out.840000.sar -- -w -r -u -n SOCK -n TCP -B -S -W > out.840000.svg
@@ -324,7 +334,10 @@ getconf PAGESIZE
 then I use 13GB from touching `2*840000` pages of memory.
 I have no idea how this didn't crash!
 I'm happy with 840,000 concurrent connections though.
-You could improve upon my result if you have more memory.
+
+You could improve upon my result if you have more memory,
+or further optimize the OS settings like reducing the buffer size.
+How many can you run? Let me know!
 
 # Summary
 
@@ -332,7 +345,7 @@ You could improve upon my result if you have more memory.
 2. WhatsApp achieved 2,000,000 connections
 3. Theoretical limit is ~1 quadrillion (1,000,000,000,000,000)
 4. You will run out of source ports (only 2<sup>16</sup>)
-5. You can fix this by creating 
+5. You can fix this by add loopback client IP addresses
 6. You will run out of file descriptors
 7. You can fix this by overriding the file descriptor limits of your OS
 8. Java will also limit the file descriptors
