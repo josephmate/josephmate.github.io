@@ -1,0 +1,19 @@
+digraph {
+# Loop detected
+#     15:BLACK
+#   16:BLACK
+#     24:RED CYCLE
+# 24:RED
+#     26:RED
+#   27:BLACK
+#     29:RED
+
+24 -> 16
+24 -> 27
+
+16 -> 15
+16 -> 24
+
+27 -> 26
+27 -> 29
+}
