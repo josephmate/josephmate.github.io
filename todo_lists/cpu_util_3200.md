@@ -18,6 +18,10 @@
         1.  ~~[ ] wouldn't logging with synchronized make the issue less likely to happen due to locking introduced?~~
 10. ~~[ ] CANCELLED: simple diagrams that demonstrate the concurrent rotation issue~~
 11. [ ] spring-rest/grpc realistic example
+    1.  [x] get grpc protobuf generating
+    2.  [ ] implement service
+    3.  [ ] implement client-server main method
+    4.  [ ] write up situation in blog post
 12. [ ] high level why it happens with two threads executing and tree rotation
     pseudo code hint is the NPE
 13. [ ] different languages that also have the issue (as long as you can catch NPE)
@@ -27,37 +31,37 @@
         3. [x] typescript
         4. [x] java
         5. [x] C#
-        6. [ ] C++
+        6. [x] C++
         7. [x] PHP
         8. ~~[ ] C~~
-        9. [ ] Go
+        9. [x] Go
         10. [x] Rust
         11. [x] kotlin
         12. [x] Ruby
     2. [ ] implement the ones that are possible
-        1. [ ] javascript
-        2. [ ] python
-        3. [ ] typescript
+        1. ~~[ ] javascript~~
+        2. ~~[ ] python~~
+        3. ~~[ ] typescript~~
         4. [x] java
         5. [ ] C#
         6. [ ] C++
-        7. [ ] PHP
-        8. [ ] C
+        7. ~~[ ] PHP~~
+        8. ~~[ ] C~~
         9. [ ] Go
-        10. [ ] Rust
-        11. [ ] kotlin
+        10. ~~[ ] Rust~~
+        11. ~~[ ] kotlin~~
         12. [ ] Ruby
-    2. [ ] link to implementations
-        1. [ ] javascript
-        2. [ ] python
-        3. [ ] typescript
-        4. [x] java
+    3. [ ] link to implementations
+        1. ~~[ ] javascript~~
+        2. ~~[ ] python~~
+        3. ~~[ ] typescript~~
+        4. [ ] java
         5. [ ] C#
         6. [ ] C++
-        7. [ ] PHP
-        8. [ ] C
+        7. ~~[ ] PHP~~
+        8. ~~[ ] C~~
         9. [ ] Go
-        10. [ ] Rust
+        10. ~~[ ] Rust~~
         11. [ ] kotlin
         12. [ ] Ruby
 14. [ ] easy solution: locking/monitors
