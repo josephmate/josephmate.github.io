@@ -31,7 +31,7 @@ digraph {
 15 [color="black"]
 26 [color="black"]
 23 -> 15
-23 -> 26
+23 -> 26 [color="blue", penwidth=3]
 
 20 [color="red"]
 15 -> 20
@@ -39,8 +39,8 @@ digraph {
 
 13 [color="black"]
 27  [color="red"]
-26 -> 13
+26 -> 13 [color="blue", penwidth=3]
 26 -> 27
 
-13 -> 23
+13 -> 23 [color="blue", penwidth=3]
 }
