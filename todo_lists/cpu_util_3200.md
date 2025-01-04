@@ -1,8 +1,7 @@
 
 1. [x] outline of article
 2. [x] code to generate cycles from TreeMap
-3. ~~[ ] CANCELLED: write code to draw graph just before loop detected
-    (too many race conditions)~~
+3. ~~[ ] CANCELLED: write code to draw graph just before loop detected (too many race conditions)~~
 4. [x] draw it using graphviz
    1. [x] add colours
 5. [x] sample stacktrace
@@ -24,11 +23,11 @@
     3.  [x] implement client-server main method
     4.  [x] write up situation in blog post
 12. [x] threadpool with swallowed stack trace realistic example
-13. [ ] look into GRPC NPE. I thought NPEs make it to the logs. not sure what happened in my example. i'm not seeing NPE in standard out.
-14. [ ] high level why it happens with two threads executing and tree rotation
+13. [x] look into GRPC NPE. I thought NPEs make it to the logs. not sure what happened in my example. i'm not seeing NPE in standard out.
+14. [x] high level why it happens with two threads executing and tree rotation
     pseudo code hint is the NPE
 15. [ ] different languages that also have the issue (as long as you can catch NPE)
-    1. [ ] research
+    1. [x] research
         1. [x] javascript
         2. [x] python
         3. [x] typescript
@@ -67,11 +66,11 @@
         10. ~~[ ] Rust~~
         11. [ ] kotlin
         12. [ ] Ruby
-16. [ ] easy solution: locking/monitors
-17. [ ] controversial solution using lg(N) extra memory
-    1.  [ ] high level description
-    2.  [ ] drawbacks
-    3.  [ ] implementation
-    4.  [ ] re run experiment with safe TreeMap
-18. [ ] conclusion
-19. clean up article
+16. [x] easy solution: locking/monitors
+17. [x] controversial solution using lg(N) extra memory
+    1.  [x] high level description
+    2.  [x] drawbacks
+    3.  ~~[ ] implementation~~ (won't do anymore)
+    4.  ~~[ ] re run experiment with safe TreeMap~~ (won't do anymore)
+18. [x] conclusion
+19. [ ] clean up article
