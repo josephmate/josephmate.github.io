@@ -52,7 +52,7 @@
         9. [ ] Go
         10. ~~[ ] Rust~~
         11. ~~[ ] kotlin~~
-        12. [ ] Ruby
+        12. [x] Ruby
     3. [ ] link to implementations
         1. ~~[ ] javascript~~
         2. ~~[ ] python~~
