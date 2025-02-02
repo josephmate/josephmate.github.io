@@ -73,4 +73,5 @@
     3.  ~~[ ] implementation~~ (won't do anymore)
     4.  ~~[ ] re run experiment with safe TreeMap~~ (won't do anymore)
 18. [x] conclusion
-19. [ ] clean up article
+19. [x] related work
+20. [ ] clean up article
