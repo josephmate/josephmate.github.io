@@ -40,17 +40,17 @@
         10. [x] Rust
         11. [x] kotlin
         12. [x] Ruby
-    2. [ ] implement the ones that are possible
+    2. [x] implement the ones that are possible
         1. ~~[ ] javascript~~
         2. ~~[ ] python~~
         3. ~~[ ] typescript~~
         4. [x] java
-        5. [ ] C#
+        5. [x] C#
         6. [x] C++
         7. ~~[ ] PHP~~
         8. ~~[ ] C~~
-        9. [ ] Go
-        10. ~~[ ] Rust~~
+        9. [x] Go
+        10. [x] Rust
         11. ~~[ ] kotlin~~
         12. [x] Ruby
     3. [ ] link to implementations
@@ -63,7 +63,7 @@
         7. ~~[ ] PHP~~
         8. ~~[ ] C~~
         9. [ ] Go
-        10. ~~[ ] Rust~~
+        10. [ ] Rust
         11. [ ] kotlin
         12. [ ] Ruby
 16. [x] easy solution: locking/monitors
