@@ -70,8 +70,10 @@
 17. [x] controversial solution using lg(N) extra memory
     1.  [x] high level description
     2.  [x] drawbacks
-    3.  ~~[ ] implementation~~ (won't do anymore)
-    4.  ~~[ ] re run experiment with safe TreeMap~~ (won't do anymore)
+    3.  [x] implementation
+    4.  [x] re run experiment with safe TreeMap
+    3.  [x] Add diff viewer somehow
+    3.  [ ] Link to ProtectedTreeMap
 18. [x] conclusion
 19. [x] related work
 20. [ ] clean up article
