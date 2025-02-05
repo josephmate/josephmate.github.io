@@ -7,13 +7,6 @@ comments: true
 categories: [Java, ExecutorService]
 ---
 
-Update: thanks to:
-
-* [Omar Elrefaei](https://github.com/Omar-Elrefaei) for the [PR](https://github.com/josephmate/josephmate.github.io/pull/42) that fixed the
-  formatting of this document.
-* [/u/thorn-harvestar/](https://www.reddit.com/r/programming/comments/q1w4od/comment/hfhw9a5/?utm_source=share&utm_medium=web2x&context=3), [/u/philipTheDev/](https://www.reddit.com/r/programming/comments/q1w4od/comment/hfhabww/), and [/u/vips7L/](https://www.reddit.com/r/java/comments/q1wlyw/comment/hfhq8pg/): for identifying another root cause. I shouldn't be using JDK8 anymore!
-* [/u/SirSagramore/](https://www.reddit.com/r/programming/comments/q1w4od/comment/hfi5vx3/) and [/u/wot-teh-phuck](https://www.reddit.com/r/programming/comments/q1w4od/comment/hfi9478/): for proving that it really was my fault :(. Premature optimization is the root of all evil.
-
 # The Sirens are blaring
 
 A couple years ago I received a bug report claiming that I caused 100% CPU util on a VM when it should have been idle.
@@ -275,3 +268,11 @@ Update: Yes it was my fault. Premature optimization is the root of all evil.
         crossorigin="anonymous"
         async>
 </script>
+
+# Thanks to:
+
+* [Omar Elrefaei](https://github.com/Omar-Elrefaei) for the [PR](https://github.com/josephmate/josephmate.github.io/pull/42) that fixed the
+  formatting of this document.
+* [/u/thorn-harvestar/](https://www.reddit.com/r/programming/comments/q1w4od/comment/hfhw9a5/?utm_source=share&utm_medium=web2x&context=3), [/u/philipTheDev/](https://www.reddit.com/r/programming/comments/q1w4od/comment/hfhabww/), and [/u/vips7L/](https://www.reddit.com/r/java/comments/q1wlyw/comment/hfhq8pg/): for identifying another root cause. I shouldn't be using JDK8 anymore!
+* [/u/SirSagramore/](https://www.reddit.com/r/programming/comments/q1w4od/comment/hfi5vx3/) and [/u/wot-teh-phuck](https://www.reddit.com/r/programming/comments/q1w4od/comment/hfi9478/): for proving that it really was my fault :(. Premature optimization is the root of all evil.
+
