@@ -34,3 +34,6 @@ gem "wdm", "~> 0.1.1", :install_if => Gem.win_platform?
 # CVE-2021-28834
 # CVE-2020-14001
 gem "kramdown", ">= 2.3.1"
+
+# /opt/local/lib/ruby3.4/3.4.0/bundled_gems.rb:82:in 'Kernel.require': cannot load such file -- bigdecimal (LoadError)
+gem 'bigdecimal', '~> 3.0', '>= 3.0.2'
