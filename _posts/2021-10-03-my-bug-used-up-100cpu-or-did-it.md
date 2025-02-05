@@ -7,9 +7,7 @@ comments: true
 categories: [Java, ExecutorService]
 ---
 
-# The Sirens are blaring
-
-A couple years ago I received a bug report claiming that I caused 100% CPU util on a VM when it should have been idle.
+The sirens were place a couple years ago when I received a bug report claiming that I caused 100% CPU util on a VM when it should have been idle.
 I was suspicious at first because I try my best to avoid patterns such as `while(true)` and `for(;;)`.
 
 The support engineer that wrote the initial report included the evidence for the 100% CPU util.

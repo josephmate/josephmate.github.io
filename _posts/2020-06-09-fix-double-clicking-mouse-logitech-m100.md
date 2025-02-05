@@ -7,8 +7,6 @@ comments: true
 categories: [Mouse, Electronics, Repair]
 ---
 
-# 1. My mouse
-
 My $15 Logitech M100 mouse has served me well for at least two years.
 It's been so long that I can't remember when I got it. 
 It's suffered so much abuse you can no longer make out the Logitech logo on the bottom.
