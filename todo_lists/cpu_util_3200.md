@@ -77,3 +77,6 @@
 18. [x] conclusion
 19. [x] related work
 20. [ ] clean up article
+    1. [ ] first skim expand existing content
+    1. [ ] spell check
+    1. [ ] proof read
