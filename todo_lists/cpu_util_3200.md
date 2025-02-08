@@ -78,5 +78,15 @@
 19. [x] related work
 20. [ ] clean up article
     1. [ ] first skim expand existing content
+        1. [x] Intro
+        1. [x] Experiment
+        1. [x] Related Work
+        1. [x] Realistic
+        1. [x] How
+        1. [x] Other langs
+        1. [x] Easy fix
+        1. [x] Controversial fix
+        1. [x] Layered
+        1. [x] Conclusion
     1. [ ] spell check
     1. [ ] proof read
