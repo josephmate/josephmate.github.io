@@ -97,10 +97,3 @@ Hope this helps you if you're stuck with a similar issue.
 Cheers,
 Joseph
 
-<script src="https://utteranc.es/client.js"
-        repo="josephmate/josephmate.github.io"
-        issue-number="27"
-        theme="github-light"
-        crossorigin="anonymous"
-        async>
-</script>

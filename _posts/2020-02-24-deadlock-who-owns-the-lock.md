@@ -7,7 +7,7 @@ comments: true
 categories: [Java, Deadlock]
 ---
 
-# What I Learned
+# What I Learned:
 1. Locking a readlock, then locking the write lock on the same lock creates a deadlock. 
 2. Deadlocks created using locks instead of monitors does not appear in thread dumps (like those created by kill -3 (linux) or Ctrl+Break (windows)).
 3. Keep digging and you'll uncover a nasty incorrect assumption you've been making.
@@ -276,11 +276,3 @@ Even worse, the deadlock wasn't detected!
 # Sample Code
 If you want to try it out, check the sample code I saved to [my JavaDeadlock github repository](https://github.com/josephmate/JavaDeadlocks).
 
-
-<script src="https://utteranc.es/client.js"
-        repo="josephmate/josephmate.github.io"
-        issue-number="8"
-        theme="github-light"
-        crossorigin="anonymous"
-        async>
-</script>

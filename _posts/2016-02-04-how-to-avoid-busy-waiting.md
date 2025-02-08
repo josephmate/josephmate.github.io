@@ -6,10 +6,6 @@ author: matejoseph
 comments: true
 categories: [C++, Computer Science, concurrency, Java, java, Job Hunt, Programming]
 ---
-Update 2021-04-08: Viliam, a reader on my wordpress spotted an error.
-Thank you again!
-I called notify() and wait() on the implicit `this` rather than the lock!
-This adds to my argument that the best way to wait for something is to use a Future. There are so many ways to get it wrong.
 
 <a href="http://www.amazon.com/Programming-Interviews-Exposed-Secrets-Landing/dp/1118261364/ref=sr_1_1?ie=UTF8&qid=1454104897&sr=8-1&keywords=programming+interviews+exposed">Programming Interviews Exposed</a> asks us to describe busy waiting and how to avoid it. The book provides a decent solution, but not the best solution. I'll first introduce the problem and then build upon the solution until we have our best solution.
 <h2>Busy Waiting</h2>
@@ -166,10 +162,8 @@ Here we were looking at an example waiting on two sub tasks to complete. However
 <h2>Summary</h2>
 If you want to avoid busy waiting you can apply the write concurrent library for your problem. If the library doesn't exist, you can try using monitors and locks, but be warned that there are many opportunities to mess up. Finally, don't use busy loops or sleep to wait on tasks.
 
-<script src="https://utteranc.es/client.js"
-        repo="josephmate/josephmate.github.io"
-        issue-number="12"
-        theme="github-light"
-        crossorigin="anonymous"
-        async>
-</script>
+Update 2021-04-08: Viliam, a reader on my wordpress spotted an error.
+Thank you again!
+I called notify() and wait() on the implicit `this` rather than the lock!
+This adds to my argument that the best way to wait for something is to use a Future. There are so many ways to get it wrong.
+

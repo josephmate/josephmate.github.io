@@ -101,10 +101,3 @@ Reading two column technical documents on the Kindle is possible. It's just not 
 <h2>References</h2>
 Timothy G. Armstrong, Vamsi Ponnekanti, Dhruba Borthakur, and Mark Callaghan. 2013. LinkBench: a database benchmark based on the Facebook social graph. In <em>Proceedings of the 2013 ACM SIGMOD International Conference on Management of Data</em> (SIGMOD '13). ACM, New York, NY, USA, 1185-1196. DOI=10.1145/2463676.2465296 http://doi.acm.org/10.1145/2463676.2465296 (Available <a href="http://people.cs.uchicago.edu/~tga/pubs/sigmod-linkbench-2013.pdf" target="_blank">here</a>)
 
-<script src="https://utteranc.es/client.js"
-        repo="josephmate/josephmate.github.io"
-        issue-number="16"
-        theme="github-light"
-        crossorigin="anonymous"
-        async>
-</script>

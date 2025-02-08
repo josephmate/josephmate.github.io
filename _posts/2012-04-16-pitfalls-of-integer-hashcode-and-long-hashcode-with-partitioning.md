@@ -184,10 +184,3 @@ If your performance depends on the size of your partitions, you should take spec
 
 Now I realize this example was really contrived because the numbers being partitioned were even. I chose it because it's really simple to understand and illustrate that  if you don't use a good hash function or have the correct number of partitions, this problem is going bite you when your numbers have a special distribution. The last time I saw this problem in the real world is when the numbers we were partitioning on usually had a particular end like XXXXX7831. If you have encountered this problem, post a comment! I am interesting in hearing about it.
 
-<script src="https://utteranc.es/client.js"
-        repo="josephmate/josephmate.github.io"
-        issue-number="21"
-        theme="github-light"
-        crossorigin="anonymous"
-        async>
-</script>

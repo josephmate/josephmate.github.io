@@ -82,10 +82,3 @@ Keeping the same code as above, but modifying str instead, allows us to incur no
 <h3>Summary</h3>
 Given the solution provided in the book and the limitations of immutable Strings in Java and C#, we might as well have used a StringBuilder, incurring potentially less excess memory and a simpler solution. StringBuffer should not be used as it's synchronized and we're not using Threads. Finally, we were really wanted to achieve the author's intended solution, we need to use C/C++ and change the method signature.
 
-<script src="https://utteranc.es/client.js"
-        repo="josephmate/josephmate.github.io"
-        issue-number="13"
-        theme="github-light"
-        crossorigin="anonymous"
-        async>
-</script>

@@ -259,14 +259,6 @@ Was this my fault?
 
 Update: Yes it was my fault. Premature optimization is the root of all evil.
 
-<script src="https://utteranc.es/client.js"
-        repo="josephmate/josephmate.github.io"
-        issue-number="41"
-        theme="github-light"
-        crossorigin="anonymous"
-        async>
-</script>
-
 # Thanks to:
 
 * [Omar Elrefaei](https://github.com/Omar-Elrefaei) for the [PR](https://github.com/josephmate/josephmate.github.io/pull/42) that fixed the

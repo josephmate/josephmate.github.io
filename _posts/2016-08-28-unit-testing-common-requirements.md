@@ -171,11 +171,3 @@ public void testKeysSorted() {
 <h1>Conclusion</h1>
 If you notice you're copying and pasting unit test code for common requirements, consider one of these two techniques. However, these techniques are only guides because you will encounter cases that do not fit cleanly. As an exercise for the reader: how would you extend these techniques to apply to java.util.WeakHashMap? If you want to have a go I've made the source available on <a href="https://github.com/josephmate/inheriting_unit_tests">my github</a>.
 
-
-<script src="https://utteranc.es/client.js"
-        repo="josephmate/josephmate.github.io"
-        issue-number="10"
-        theme="github-light"
-        crossorigin="anonymous"
-        async>
-</script>

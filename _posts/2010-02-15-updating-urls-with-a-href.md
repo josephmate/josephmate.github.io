@@ -30,10 +30,3 @@ We can have something like:
 
 However, that means with every AJAX call that flips the page on the table, will will also have to update all the links on the page as well.
 
-<script src="https://utteranc.es/client.js"
-        repo="josephmate/josephmate.github.io"
-        issue-number="32"
-        theme="github-light"
-        crossorigin="anonymous"
-        async>
-</script>

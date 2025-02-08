@@ -29,10 +29,3 @@ error(M) is the training error as a function of the number of hidden units
 <h2>Conclusion</h2>
 Hopefully now you have some mathematically intuition for why having too complex a model causes poor performance on new examples. Unfortunately, the derivation in the paper does not extend beyond RBF networks. However, the tools used in the proof might be applicable to other machine learning algorithms.
 
-<script src="https://utteranc.es/client.js"
-        repo="josephmate/josephmate.github.io"
-        issue-number="18"
-        theme="github-light"
-        crossorigin="anonymous"
-        async>
-</script>

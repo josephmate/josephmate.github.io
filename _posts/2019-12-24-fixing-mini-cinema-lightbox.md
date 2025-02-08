@@ -36,11 +36,3 @@ That fixed the issue:
 
 Lesson learned is that you should not assume a root cause until you've done enough investigation. Always try to open your broken device and fix it before throwing it out.
 
-
-<script src="https://utteranc.es/client.js"
-        repo="josephmate/josephmate.github.io"
-        issue-number="9"
-        theme="github-light"
-        crossorigin="anonymous"
-        async>
-</script>

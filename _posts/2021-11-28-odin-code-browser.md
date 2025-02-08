@@ -30,10 +30,3 @@ The coolest things I want to see in the project is linking from Java to native c
 
 Let me know what you think!
 
-<script src="https://utteranc.es/client.js"
-        repo="josephmate/josephmate.github.io"
-        issue-number="43"
-        theme="github-light"
-        crossorigin="anonymous"
-        async>
-</script>

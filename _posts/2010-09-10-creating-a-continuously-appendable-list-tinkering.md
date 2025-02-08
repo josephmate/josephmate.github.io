@@ -113,10 +113,3 @@ The result:
 
 Now I believe that I have all the tools necessary to mimic the google contact's continuously appendable list.
 
-<script src="https://utteranc.es/client.js"
-        repo="josephmate/josephmate.github.io"
-        issue-number="25"
-        theme="github-light"
-        crossorigin="anonymous"
-        async>
-</script>

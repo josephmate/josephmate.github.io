@@ -54,10 +54,3 @@ Finished in 0.00096 seconds.
 Cheers,
 Joseph
 
-<script src="https://utteranc.es/client.js"
-        repo="josephmate/josephmate.github.io"
-        issue-number="36"
-        theme="github-light"
-        crossorigin="anonymous"
-        async>
-</script>
