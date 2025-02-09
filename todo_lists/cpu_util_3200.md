@@ -64,8 +64,8 @@
 19. [x] related work
 20. ~~[ ] include source code under a detail tag in addition to a link the repo~~ jekyll wasn't liking detail tags
 20. [ ] include source snippets with link
-    1. [x] Experiment: SimpleRepro
-    1. [x] Experiment: Generate Graph
+    1. [ ] Experiment: SimpleRepro
+    1. [ ] Experiment: Generate Graph
     1. [ ] Real: Executor
     1. [ ] Real: gRPC
     1. [ ] Languages: Java
