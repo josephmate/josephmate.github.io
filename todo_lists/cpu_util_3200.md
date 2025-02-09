@@ -63,21 +63,21 @@
 18. [x] conclusion
 19. [x] related work
 20. ~~[ ] include source code under a detail tag in addition to a link the repo~~ jekyll wasn't liking detail tags
-20. [ ] include source snippets with link
-    1. [ ] Experiment: SimpleRepro
-    1. [ ] Experiment: Generate Graph
-    1. [ ] Real: Executor
-    1. [ ] Real: gRPC
-    1. [ ] Languages: Java
-    1. [ ] Languages: C#
-    1. [ ] Languages: Ruby
-    1. [ ] Languages: Go
-    1. [ ] Languages: C++
-    1. [ ] Languages: Rust
+20. [x] include source snippets with link
+    1. [x] Experiment: SimpleRepro
+    1. [x] Experiment: Generate Graph
+    1. [x] Real: Executor
+    1. [x] Real: gRPC
+    1. [x] Languages: Java
+    1. [x] Languages: C#
+    1. [x] Languages: Ruby
+    1. [x] Languages: Go
+    1. [x] Languages: C++
+    1. [x] Languages: Rust
 21. [x] fix link in related worked
 22. [x] Fix language table
 23. [ ] clean up article
-    1. [ ] first skim expand existing content
+    1. [x] first skim expand existing content
         1. [x] Intro
         1. [x] Experiment
         1. [x] Related Work
@@ -88,8 +88,29 @@
         1. [x] Controversial fix
         1. [x] Layered
         1. [x] Conclusion
-    1. [ ] spell check
-    1. [ ] proof read
+    1. [x] spell check
+    1. [ ] proof read 1
+        1. [ ] Intro
+        1. [ ] Experiment
+        1. [ ] Related Work
+        1. [ ] Realistic
+        1. [ ] How
+        1. [ ] Other langs
+        1. [ ] Easy fix
+        1. [ ] Controversial fix
+        1. [ ] Layered
+        1. [ ] Conclusion
+    1. [ ] proof read 2
+        1. [ ] Intro
+        1. [ ] Experiment
+        1. [ ] Related Work
+        1. [ ] Realistic
+        1. [ ] How
+        1. [ ] Other langs
+        1. [ ] Easy fix
+        1. [ ] Controversial fix
+        1. [ ] Layered
+        1. [ ] Conclusion
 24. [ ] send for review
 25. [ ] push to public repos
 26. [ ] test links to public experiment repo
