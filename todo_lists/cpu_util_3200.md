@@ -53,19 +53,6 @@
         10. [x] Rust
         11. ~~[ ] kotlin~~
         12. [x] Ruby
-    3. [ ] link to implementations
-        1. ~~[ ] javascript~~
-        2. ~~[ ] python~~
-        3. ~~[ ] typescript~~
-        4. [ ] java
-        5. [ ] C#
-        6. [ ] C++
-        7. ~~[ ] PHP~~
-        8. ~~[ ] C~~
-        9. [ ] Go
-        10. [ ] Rust
-        11. [ ] kotlin
-        12. [ ] Ruby
 16. [x] easy solution: locking/monitors
 17. [x] controversial solution using lg(N) extra memory
     1.  [x] high level description
@@ -73,10 +60,23 @@
     3.  [x] implementation
     4.  [x] re run experiment with safe TreeMap
     3.  [x] Add diff viewer somehow
-    3.  [ ] Link to ProtectedTreeMap
 18. [x] conclusion
 19. [x] related work
-20. [ ] clean up article
+20. ~~[ ] include source code under a detail tag in addition to a link the repo~~ jekyll wasn't liking detail tags
+20. [ ] include source snippets with link
+    1. [x] Experiment: SimpleRepro
+    1. [x] Experiment: Generate Graph
+    1. [ ] Real: Executor
+    1. [ ] Real: gRPC
+    1. [ ] Languages: Java
+    1. [ ] Languages: C#
+    1. [ ] Languages: Ruby
+    1. [ ] Languages: Go
+    1. [ ] Languages: C++
+    1. [ ] Languages: Rust
+21. [x] fix link in related worked
+22. [x] Fix language table
+23. [ ] clean up article
     1. [ ] first skim expand existing content
         1. [x] Intro
         1. [x] Experiment
@@ -90,3 +90,14 @@
         1. [x] Conclusion
     1. [ ] spell check
     1. [ ] proof read
+24. [ ] send for review
+25. [ ] push to public repos
+26. [ ] test links to public experiment repo
+    1. [ ] java
+    2. [ ] C#
+    3. [ ] C++
+    4. [ ] Go
+    5. [ ] Rust
+    6. [ ] Ruby
+    7. [ ] Link to ProtectedTreeMap
+27. [ ] report bug to jekyll about using detail tag. for now just include source snippets with link
