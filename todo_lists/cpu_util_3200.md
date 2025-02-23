@@ -112,8 +112,30 @@
         1. [ ] Layered
         1. [ ] Conclusion
 24. [x] send for review
-25. [ ] push to public repos
-26. [ ] test links to public experiment repo
+25. [x] determine commands to transfer to public repo
+```
+cd java-by-experiments
+git remote add private ../java-by-experiments-private/.git
+git fetch private
+git checkout private/main -b private-main
+git checkout main
+git merge private-main
+git branch -d private-main
+git remote remove private
+git push
+
+cd josephmate.github.io
+git remote add private ../josephmate.github.io-private/.git
+git fetch private
+git checkout private/main -b private-main
+git checkout master
+git merge private-main
+git branch -d private-main
+git remote remove private
+git push
+```
+26. [ ] push to public repos
+27. [ ] test links to public experiment repo
     1. [ ] java
     2. [ ] C#
     3. [ ] C++
@@ -121,4 +143,6 @@
     5. [ ] Rust
     6. [ ] Ruby
     7. [ ] Link to ProtectedTreeMap
-27. [ ] report bug to jekyll about using detail tag. for now just include source snippets with link
+27. [x] report bug to jekyll about using detail tag. for now just include source snippets with link
+    1. already reported: https://github.com/jekyll/jekyll/issues/9297
+
