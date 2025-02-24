@@ -100,17 +100,17 @@
         1. [x] Controversial fix
         1. [x] Layered
         1. [x] Conclusion
-    1. [ ] proof read 2
-        1. [ ] Intro
-        1. [ ] Experiment
-        1. [ ] Related Work
-        1. [ ] Realistic
-        1. [ ] How
-        1. [ ] Other langs
-        1. [ ] Easy fix
-        1. [ ] Controversial fix
-        1. [ ] Layered
-        1. [ ] Conclusion
+    1. [x] proof read 2
+        1. [x] Intro
+        1. [x] Experiment
+        1. [x] Related Work
+        1. [x] Realistic
+        1. [x] How
+        1. [x] Other langs
+        1. [x] Easy fix
+        1. [x] Controversial fix
+        1. [x] Layered
+        1. [x] Conclusion
 24. [x] send for review
 25. [x] determine commands to transfer to public repo
 ```
