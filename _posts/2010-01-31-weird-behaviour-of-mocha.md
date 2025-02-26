@@ -73,10 +73,3 @@ Checking /tmp/ensure_config_helper_test_473533902/validate_script.sh
 
 Now you can see that `<blah> != MarkusConfigurator.<blah>`. So the namespace for the method you are trying to call cannot be ambiguous. In the source code above you must use `MarkusConfigurator.<blah>`.
 
-<script src="https://utteranc.es/client.js"
-        repo="josephmate/josephmate.github.io"
-        issue-number="33"
-        theme="github-light"
-        crossorigin="anonymous"
-        async>
-</script>

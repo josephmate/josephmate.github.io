@@ -8,7 +8,6 @@ categories: [Java, ExecutorService]
 ---
 
 For the last couple of months I've been working on a [Java code navigator that fits into your browser](https://github.com/josephmate/OdinCodeBrowser/#readme).
-
 This won't replace your IDE.
 Code discussions are handled better by github or gitlab.
 However, if you want to share links to your code with others that let them navigate all the way down to the JDK, then give this a try.
@@ -31,10 +30,3 @@ The coolest things I want to see in the project is linking from Java to native c
 
 Let me know what you think!
 
-<script src="https://utteranc.es/client.js"
-        repo="josephmate/josephmate.github.io"
-        issue-number="43"
-        theme="github-light"
-        crossorigin="anonymous"
-        async>
-</script>

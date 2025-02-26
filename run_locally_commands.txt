@@ -4,6 +4,10 @@ https://jekyllrb.com/docs/
 
 #gem install jekyll bundler
 gem install --no-document jekyll bundler
+gem install bundler:2.1.4
+# restart terminal
+
+bundle install
 
 Run locally:
 bundle exec jekyll serve

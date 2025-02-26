@@ -26,10 +26,3 @@ The Huffington Post has already performed this experiment documented in the arti
 
 <a href="http://seattletimes.nwsource.com/html/nationworld/2002076071_coke29.html">Mexican Coke a hit in U.S. By Kevin Pang</a>
 
-<script src="https://utteranc.es/client.js"
-        repo="josephmate/josephmate.github.io"
-        issue-number="22"
-        theme="github-light"
-        crossorigin="anonymous"
-        async>
-</script>

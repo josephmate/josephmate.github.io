@@ -17,10 +17,3 @@ git clone git://github.com/josephmate/AndroidAppendableList.git
 Cheers,
 Joseph
 
-<script src="https://utteranc.es/client.js"
-        repo="josephmate/josephmate.github.io"
-        issue-number="24"
-        theme="github-light"
-        crossorigin="anonymous"
-        async>
-</script>

@@ -20,10 +20,3 @@ Stay tuned for some reviews, presentation slides, and anything else I've done re
 <h2>STAT841: Classification</h2>
 Secondly, I'm taking STAT841: Classification. Here we learn the derivations of common Machine Learning classification techniques like Fisher's Discriminant Analysis, Logistic Regression, Neural Networks, and Support Vector Machines. I'll be posting any results from lectures that I find interesting. I'm taking this course even though my focus is in Distributed Systems and Databases because having a strong foundation in Machine Learning will hopefully allow me to apply Machine Learning techniques to Distributed System problems. Additionally, I have a strong interest in Machine Learning.
 
-<script src="https://utteranc.es/client.js"
-        repo="josephmate/josephmate.github.io"
-        issue-number="19"
-        theme="github-light"
-        crossorigin="anonymous"
-        async>
-</script>

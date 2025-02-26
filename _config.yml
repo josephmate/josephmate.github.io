@@ -4,7 +4,7 @@
 # the initial set up you won't need to come back to this file often.
 
 # Build settings
-remote_theme: daattali/beautiful-jekyll@5.0.0
+remote_theme: daattali/beautiful-jekyll@6.0.1
 
 # --- Required options --- #
 

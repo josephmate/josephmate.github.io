@@ -8,7 +8,6 @@ categories: [Electronics]
 ---
 
 Instead of throwing away something, you should try to fix it, because the root cause might be simple to fix. 
-
 I recently attended AWS Summit 2019 and VMWare kindly gave away these cool Mini Cinema Lightboxes! They are great decorations for a wedding or dinner party.
 
 ![Mini Cinema Lightbox](/assets/2019-12-24-fix-mini-cinema-lightbox/01-intro.jpg)
@@ -37,11 +36,3 @@ That fixed the issue:
 
 Lesson learned is that you should not assume a root cause until you've done enough investigation. Always try to open your broken device and fix it before throwing it out.
 
-
-<script src="https://utteranc.es/client.js"
-        repo="josephmate/josephmate.github.io"
-        issue-number="9"
-        theme="github-light"
-        crossorigin="anonymous"
-        async>
-</script>

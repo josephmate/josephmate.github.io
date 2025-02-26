@@ -58,10 +58,3 @@ end
 Cheers,
 Joseph
 
-<script src="https://utteranc.es/client.js"
-        repo="josephmate/josephmate.github.io"
-        issue-number="35"
-        theme="github-light"
-        crossorigin="anonymous"
-        async>
-</script>

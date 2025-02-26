@@ -7,8 +7,6 @@ comments: true
 categories: [Mouse, Electronics, Repair]
 ---
 
-# 1. My mouse
-
 My $15 Logitech M100 mouse has served me well for at least two years.
 It's been so long that I can't remember when I got it. 
 It's suffered so much abuse you can no longer make out the Logitech logo on the bottom.
@@ -85,11 +83,3 @@ The vibrations are what cause the double click.
 By flattening or fattening the u shape and putting it back, you make it springier, preventing the vibrations.
 Now with it fixed, I hope that I can keep using it for 2 more years!
 
-
-<script src="https://utteranc.es/client.js"
-        repo="josephmate/josephmate.github.io"
-        issue-number="7"
-        theme="github-light"
-        crossorigin="anonymous"
-        async>
-</script>

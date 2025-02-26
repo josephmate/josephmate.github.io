@@ -23,10 +23,3 @@ Student.all.each do |student|
 end
 ```
 
-<script src="https://utteranc.es/client.js"
-        repo="josephmate/josephmate.github.io"
-        issue-number="31"
-        theme="github-light"
-        crossorigin="anonymous"
-        async>
-</script>
