@@ -134,15 +134,16 @@ git branch -d private-main
 git remote remove private
 git push
 ```
-26. [ ] push to public repos
-27. [ ] test links to public experiment repo
-    1. [ ] java
-    2. [ ] C#
-    3. [ ] C++
-    4. [ ] Go
-    5. [ ] Rust
-    6. [ ] Ruby
-    7. [ ] Link to ProtectedTreeMap
+26. [x] push to public repos
+27. [x] test links to public experiment repo
+    1. [x] SimpleRepro
+    1. [x] java
+    2. [x] C#
+    3. [x] C++
+    4. [x] Go
+    5. [x] Rust
+    6. [x] Ruby
+    7. [x] Link to ProtectedTreeMap
 27. [x] report bug to jekyll about using detail tag. for now just include source snippets with link
     1. already reported: https://github.com/jekyll/jekyll/issues/9297
 
