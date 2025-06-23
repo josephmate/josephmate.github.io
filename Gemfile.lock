@@ -40,6 +40,7 @@ GEM
     ffi (1.17.1-arm-linux-gnu)
     ffi (1.17.1-arm-linux-musl)
     ffi (1.17.1-arm64-darwin)
+    ffi (1.17.1-x64-mingw-ucrt)
     ffi (1.17.1-x86_64-darwin)
     ffi (1.17.1-x86_64-linux-gnu)
     ffi (1.17.1-x86_64-linux-musl)
@@ -241,6 +242,8 @@ GEM
       racc (~> 1.4)
     nokogiri (1.18.2-arm64-darwin)
       racc (~> 1.4)
+    nokogiri (1.18.2-x64-mingw-ucrt)
+      racc (~> 1.4)
     nokogiri (1.18.2-x86_64-darwin)
       racc (~> 1.4)
     nokogiri (1.18.2-x86_64-linux-gnu)
@@ -283,7 +286,7 @@ GEM
     uri (1.0.2)
     wdm (0.1.1)
     webrick (1.9.1)
-    zeitwerk (2.7.1)
+    zeitwerk (2.6.18)
 
 PLATFORMS
   aarch64-linux-gnu
@@ -291,6 +294,7 @@ PLATFORMS
   arm-linux-gnu
   arm-linux-musl
   arm64-darwin
+  x64-mingw-ucrt
   x86_64-darwin
   x86_64-linux-gnu
   x86_64-linux-musl

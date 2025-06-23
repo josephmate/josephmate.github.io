@@ -1,0 +1,18 @@
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11.12.0/dist/mermaid.min.js"></script>
+<script>
+  $(document).ready(function () {
+    // use https://icones.js.org/ to find more
+    mermaid.registerIconPacks([
+      {
+        name: 'mdi',
+        loader: () =>
+          fetch('https://unpkg.com/@iconify-json/mdi@1/icons.json').then((res) => res.json()),
+      },
+    ]);
+    mermaid.initialize({
+      startOnLoad:true,
+      theme: "default",
+    });
+    window.mermaid.init(undefined, document.querySelectorAll('.language-mermaid'));
+  });
+</script>
