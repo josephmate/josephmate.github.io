@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Ghost in the Wi-Fi"
-date: 2025-11-12 8:30
+date: 2026-01-20 22:44
 author: Joseph Mate
 comments: true
 mermaid: true
