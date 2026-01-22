@@ -45,10 +45,11 @@ round-avatar: true
 # Select the social network links that you want to show in the footer.
 # Uncomment the links you want to show and add your information to each one.
 social-network-links:
+  rss: true  # remove this line if you don't want to show an RSS link at the bottom
   email: "mate.josephDELETETHIS@gmail.com"
-# facebook: deanattali
+# facebook: facebookid
   github: josephmate
-# twitter: daattali
+# twitter: twitterid
   reddit: ThanksMorningCoffee
   linkedin: josephmatei
 #  xing: yourname
